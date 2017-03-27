@@ -18,14 +18,14 @@ def gradient(p):
 	g[:-1] = 2*np.dot(np.transpose(X)*sigmoid(s)*(1 - sigmoid(s))*(yt - y),np.ones(len(yt)))
 	g[-1]  = 2*np.dot(sigmoid(s)*(1 - sigmoid(s))*(yt - y),np.ones(len(yt)))
 	return g
-
+	
 # invoer voor OF operatie
 X = np.array([  [0,0],
                 [0,1],
                 [1,0],
                 [1,1]])
-
-# uitvoer
+    
+# uitvoer        
 y = np.array([0,1,1,1])
 
 # beginschatting voor de gewichten
@@ -37,7 +37,7 @@ for iter in range(200):
 	f = misfit(p)
 	g = gradient(p)
 	p = p - alpha*g
-
+	
 	# print
 	print(iter,f,np.dot(g,g))
 
