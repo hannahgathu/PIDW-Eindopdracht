@@ -49,7 +49,7 @@ print("Test uitvoer:\n", Y)
 class TwoLayerNeuralNetwork():
     """ Neuraal netwerk met één verborgen laag """
     def __init__(self, aantal, test_in, test_uit):
-        w_len = aantal * (np.size(test_uit) + 1) # dit is niet heel mooi, maar het werkt
+        w_len = aantal * (np.shape(test_in)[1] + 1) # dit is niet heel mooi, maar het werkt
         b_len = aantal + 1
         parameters = np.random.random(w_len + b_len)
 
