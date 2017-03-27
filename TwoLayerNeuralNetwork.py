@@ -4,74 +4,56 @@ from autograd import grad
 class TwoLayerNeuralNetwork():
     """ Neuraal netwerk met één verborgen laag:
         k is het aantal eenheden in de verborgen laag
-        test_in is de invoer van data om te leren,
-        test_uit is de bekende uitvoer bij de testdata"""
-    def __init__(self, k, test_in, test_uit):
-        w_len = k * (np.size(test_uit) + 1)
+        X is de invoer van data om te leren,
+        Y is de bekende uitvoer bij de testdata
+        """
+    def __init__(self, k, X, Y):
+        w_len = k * (np.shape(X)[-1] + 1)
         b_len = k + 1
-        p = np.random.random(w_len + b_len)
-
-        self.k = k 
-        self.p = p # lijst met gewichten en bias
-        self.w = self.p[:-(self.k+1)] # lijst met gewichten voor alle connecties
-        self.bias = self.p[-(self.k+1):] # lijst met bias voor alle eenheden
-        self.test_in = test_in 
-        self.test_uit = test_uit 
-
+        self.k = k
+        #p is een lijst met beginschattingen voor de gewichten [w1,w2,...wn,b]
+        self.p = np.random.random(w_len + b_len)
+        self.X = X 
+        self.Y = Y 
 
     # functies
-    def sigmoid(self, x):
+    def sigma(self, x):
         """ activatiefunctie sigma """
         return 1/(1+np.exp(-x))
 
-
-    def fout(self, variabelen):
+    def fout(self, p):
         """ bepaalt de fout met als variabelen de gewichten en bias
         bewerkingen zijn ongeveer gelijk aan die in self.predict()
         """
-        weging = variabelen[:-(self.aantal+1)]
-        bias = variabelen[-(self.aantal+1):]
-
-        s_uit = bias[-1]
-        for eenheid in range(self.aantal):
-            w = weging[0:np.shape(self.test_in)[-1]]
-            x = np.transpose(self.test_in)
-            s = np.dot(w, x) + bias[eenheid]
-            weging = weging[np.shape(self.test_in)[-1]:]
-            y = self.sigmoid(s)
-            #tussen[eenheid,:] = y
-            s_uit = s_uit + weging[-self.aantal+eenheid] * y
-
-        # einduitkomst
-        y_uit = self.sigmoid(s_uit)
-        verschil = y_uit - self.test_uit
+        y_uit = self.bereken_y(self.X, p)
+        verschil = y_uit - self.Y
         return np.dot(verschil, verschil)
 
+    def bereken_y(self, invoer, p):
+        w = p[:-(self.k+1)]
+        b = p[-(self.k+1):]
 
-    def predict(self, invoer):
-        """ voorspelt een uitvoer voor de gegeven invoer """
-        weging = self.parameters[:-(self.aantal+1)]
-        bias = self.parameters[-(self.aantal+1):]
-
-        s_uit = bias[-1]
-        for eenheid in range(self.aantal):
-            w = weging[0:np.shape(invoer)[-1]]
-            x = np.transpose(invoer)
-            s = np.dot(w, x) + bias[eenheid]
-            weging = weging[np.shape(invoer)[-1]:]
-            y = self.sigmoid(s)
-            #tussen[eenheid,:] = y
-            s_uit = s_uit + weging[-self.aantal+eenheid] * y
+        s_uit = b[-1]
+        for eenheid in range(self.k):
+            wi = w[0:np.shape(invoer)[-1]]
+            si = np.dot(invoer, wi) + b[eenheid]
+            w = w[np.shape(invoer)[-1]:]
+            yt = self.sigma(si)
+            s_uit = s_uit + w[-self.k+eenheid] * yt
 
         # einduitkomst
-        y_uit = self.sigmoid(s_uit)
-        return(y_uit)
+        return self.sigma(s_uit)
 
-
-    def train(self, iteraties, alpha):
+    def train(self, iteraties, alfa):
         """ train netwerk met gegeven invoer en gegeven uitvoer """
         for i in range(iteraties):
             gradient_functie = grad(self.fout)
-            gradient = gradient_functie(self.parameters)
-            self.parameters = self.parameters - alpha * gradient
+            gradient = gradient_functie(self.p)
+            self.p = self.p - alfa * gradient
+            
+    def predict(self, invoer):
+        """ voorspelt een uitvoer voor de gegeven invoer """
+        return self.bereken_y(invoer, self.p)
 
+
+    

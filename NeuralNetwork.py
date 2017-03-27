@@ -7,19 +7,20 @@ class NeuralNetwork():
            X is de invoer van data om te leren,
            Y is de bekende uitvoer bij de testdata
            """
-        w_len = np.shape(X)[1]
-        #p is een list met beginschattingen voor de gewichten [w1,w2,...wn,b]
+        w_len = np.shape(X)[-1]
+        #p is een lijst met beginschattingen voor de gewichten [w1,w2,...wn,b]
         self.p = np.random.random(w_len + 1)
         self.X = X
         self.Y = Y
 
     def sigma(self, x):
-        """sigma (activatiefunctie)"""
+        """activatiefunctie sigma"""
         return 1/(1+np.exp(-x))
 
-    def gradient(self, X, Y):
+    def gradient(self):
         """berekent de gradient van de errorfunctie"""
-        p = self.p
+        p = self.p;  X = self.X;  Y = self.Y
+        
         #s is voor ieder voorbeeld het inproduct van X en W
         s = np.dot(X,p[:-1]) + p[-1]
         yt = self.sigma(s)
@@ -32,11 +33,11 @@ class NeuralNetwork():
     def train(self, iteraties, alfa):
         """X is de invoer, y de uitvoer"""
         for iteration in range(iteraties):
-            g = self.gradient(self.X, self.Y)
+            g = self.gradient()
             self.p = self.p-alfa*g
 
-    def predict(self, inputs):
-        """berekent de uitvoer voor de gegeven 'inputs'
+    def predict(self, invoer):
+        """berekent de uitvoer voor de gegeven invoer
            adhv de gevonden waarden van p
            """
-        return self.sigma(np.dot(inputs, self.p[:-1])+self.p[-1])
+        return self.sigma(np.dot(invoer, self.p[:-1])+self.p[-1])

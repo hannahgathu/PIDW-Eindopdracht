@@ -52,7 +52,7 @@ print("Test uitvoer:\n", Y)
 netwerk = TwoLayerNeuralNetwork(10, X, Y)
 
 print("\n")
-print("Oude parameters:  ", netwerk.parameters)
+print("Oude parameters:  ", netwerk.p)
 for row in X:
     uit = netwerk.predict(row)
     print("In:", row, " Uit:", uit)
@@ -60,7 +60,7 @@ for row in X:
 print("\nTrain")
 netwerk.train(100, 1e0)
 
-print("Nieuwe parameters:", netwerk.parameters)
+print("Nieuwe parameters:", netwerk.p)
 for row in X:
     uit = netwerk.predict(row)
     print("In:", row, " Uit:", uit)
