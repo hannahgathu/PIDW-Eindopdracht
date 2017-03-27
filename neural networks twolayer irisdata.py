@@ -29,18 +29,6 @@ from autograd import grad
 # importeren van IrisData
 # symbolen zijn dezelfde als in readIrisData.py
 # de volgende regel voert alles in readIrisData.py uit
-#from readIrisData import *
-#X = X/10
-#y = y/3
-
-### invoer -> 2
-##X = np.array([[0,0], [0,1], [1,0], [1,1]])
-##Y = np.array([0, 0, 0, 1]) # OR
-##
-### invoer -> 3
-##X = np.array([[0,0,0], [0,0,1], [0,1,0], [0,1,1], [1,0,0], [1,0,1], [1,1,0], [1,1,1]])
-###Y = np.array([0, 1, 1, 1, 1, 1, 1, 1]) # minimaal 1
-##Y = np.array([0, 0, 0, 1, 0, 1, 1, 1])# minimaal 2
 
 import csv
 
