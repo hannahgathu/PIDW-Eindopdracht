@@ -20,9 +20,10 @@ optimaliseren?
 in dit bestand wordt autograd gebruikt (installatie: pip install autograd)
 zie ook https://github.com/HIPS/autograd
 """
-#import numpy as np
+
 import autograd.numpy as np # om autograd te kunnen gebruiken
 from autograd import grad
+from TwoLayerNeuralNetwork import TwoLayerNeuralNetwork
 
 
 ## test data
@@ -116,8 +117,6 @@ class TwoLayerNeuralNetwork():
             gradient_functie = grad(self.fout)
             gradient = gradient_functie(self.parameters)
             self.parameters = self.parameters - alpha * gradient
-
-
 
 
 # op dit moment zijn de invoer van TwoLayerNeuralNetwork():
