@@ -2,18 +2,21 @@ import autograd.numpy as np # om autograd te kunnen gebruiken
 from autograd import grad
 
 class TwoLayerNeuralNetwork():
-    """ Neuraal netwerk met één verborgen laag """
-    def __init__(self, aantal, test_in, test_uit):
-        w_len = aantal * (np.size(test_uit) + 1) # dit is niet heel mooi, maar het werkt
-        b_len = aantal + 1
-        parameters = np.random.random(w_len + b_len)
+    """ Neuraal netwerk met één verborgen laag:
+        k is het aantal eenheden in de verborgen laag
+        test_in is de invoer van data om te leren,
+        test_uit is de bekende uitvoer bij de testdata"""
+    def __init__(self, k, test_in, test_uit):
+        w_len = k * (np.size(test_uit) + 1)
+        b_len = k + 1
+        p = np.random.random(w_len + b_len)
 
-        self.aantal = aantal # aantal eenheden in de verborgen laag
-        self.parameters = parameters # lijst met gewichten en bias
-        self.gewichten = self.parameters[:-(self.aantal+1)] # lijst met gewichten voor alle connecties
-        self.bias = self.parameters[-(self.aantal+1):] # lijst met bias voor alle eenheden
-        self.test_in = test_in # data om te leren
-        self.test_uit = test_uit # data om te leren
+        self.k = k 
+        self.p = p # lijst met gewichten en bias
+        self.w = self.p[:-(self.k+1)] # lijst met gewichten voor alle connecties
+        self.bias = self.p[-(self.k+1):] # lijst met bias voor alle eenheden
+        self.test_in = test_in 
+        self.test_uit = test_uit 
 
 
     # functies
