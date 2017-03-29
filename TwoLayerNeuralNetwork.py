@@ -13,8 +13,8 @@ class TwoLayerNeuralNetwork():
         self.k = k
         #p is een lijst met beginschattingen voor de gewichten [w1,w2,...wn,b]
         self.p = np.random.random(w_len + b_len)
-        self.X = X 
-        self.Y = Y 
+        self.X = X
+        self.Y = Y
 
     # functies
     def sigma(self, x):
@@ -30,18 +30,12 @@ class TwoLayerNeuralNetwork():
         return np.dot(verschil, verschil)
 
     def bereken_y(self, invoer, p):
-        w = p[:-(self.k+1)]
-        b = p[-(self.k+1):]
-
-        s_uit = b[-1]
+        s_uit = p[-1]
         for eenheid in range(self.k):
-            wi = w[0:np.shape(invoer)[-1]]
-            si = np.dot(invoer, wi) + b[eenheid]
-            w = w[np.shape(invoer)[-1]:]
+            wi = p[eenheid*np.shape(invoer)[-1]:(eenheid+1)*np.shape(invoer)[-1]] # gewichten
+            si = np.dot(invoer, wi) + p[-(self.k+1)+eenheid] # inp + bias
             yt = self.sigma(si)
-            s_uit = s_uit + w[-self.k+eenheid] * yt
-
-        # einduitkomst
+            s_uit = s_uit + p[-(2*self.k+1)+eenheid] * yt # totaal + weging * y
         return self.sigma(s_uit)
 
     def train(self, iteraties, alfa):
@@ -50,10 +44,7 @@ class TwoLayerNeuralNetwork():
             gradient_functie = grad(self.fout)
             gradient = gradient_functie(self.p)
             self.p = self.p - alfa * gradient
-            
+
     def predict(self, invoer):
         """ voorspelt een uitvoer voor de gegeven invoer """
         return self.bereken_y(invoer, self.p)
-
-
-    
