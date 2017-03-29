@@ -17,25 +17,18 @@ class TwoLayerNeuralNetwork():
         self.k = k
         #p is een lijst met beginschattingen voor de gewichten [w1,w2,...wn,b]
         self.p = np.random.random(w_len + b_len)
-<<<<<<< HEAD
         self.X = np.round(X/n, 1)
         self.Y = np.round(Y/m, 1)
         self.m = m
-        self.output = np.zeros((self.j, self.l + 2))
-        print('output: ',self.output)
+        self.output = np.zeros((self.j, self.l + 3))
         self.printbegin()
-=======
-        self.X = X
-        self.Y = Y
->>>>>>> origin/master
 
     def printbegin(self):
-        print("Test invoer:\n", self.X)
-        print("Test uitvoer:\n", np.round(self.m *self.Y, 0))
         print("\nOude parameters:  \n", self.p)
         for i in range(self.j):
             self.output[i][0:self.l] = self.X[i]
             self.output[i][self.l] = self.predict(self.X[i])
+            self.output[i][self.l + 2] = self.Y[i]
             
     # functies
     def sigma(self, x):
@@ -52,7 +45,7 @@ class TwoLayerNeuralNetwork():
     def bereken_y(self, invoer, p):
         s_uit = p[-1]
         for eenheid in range(self.k):
-            wi = p[eenheid*np.shape(invoer)[-1]:(eenheid+1)*np.shape(invoer)[-1]] # gewichten
+            wi = p[eenheid*self.l:(eenheid+1)*self.l] # gewichten
             si = np.dot(invoer, wi) + p[-(self.k+1)+eenheid] # inp + bias
             yt = self.sigma(si)
             s_uit = s_uit + p[-(2*self.k+1)+eenheid] * yt # totaal + weging * y
@@ -60,29 +53,19 @@ class TwoLayerNeuralNetwork():
 
     def train(self, iteraties, alfa):
         """ train netwerk met gegeven invoer en gegeven uitvoer """
-        print('\n Train')
         for i in range(iteraties):
             gradient_functie = grad(self.fout)
             gradient = gradient_functie(self.p)
             self.p = self.p - alfa * gradient
-<<<<<<< HEAD
         self.printeind()
-        
+                
     def printeind(self):        
-        print("Nieuwe parameters: \n", self.p)
+        print("Nieuwe parameters na training: \n", self.p)
+        print('Resultaten per voorbeeld:')
         for i in range(self.j):
             self.output[i][self.l + 1] = self.predict(self.X[i])
-            print('In: {0}, Oud uit: {1:.0f}, Nieuw uit: {2:.0f}'.format(self.output[i][0:self.l], self.output[i][self.l], self.output[i][self.l+1]))
+            print('In: {0}, Oud uit: {1:.0f}, Nieuw uit: {2:.0f}, Correct uit: {2:.0f}'.format(self.output[i][0:self.l], self.output[i][self.l], self.output[i][self.l+1], self.output[i][self.l+2]))
             
     def predict(self, invoer):
         """ voorspelt een uitvoer voor de gegeven invoer """
         return np.round(self.m*self.bereken_y(invoer, self.p))
-
-
-    
-=======
-
-    def predict(self, invoer):
-        """ voorspelt een uitvoer voor de gegeven invoer """
-        return self.bereken_y(invoer, self.p)
->>>>>>> origin/master
