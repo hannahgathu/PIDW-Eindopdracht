@@ -28,7 +28,6 @@ class TwoLayerNeuralNetwork():
         for i in range(self.j):
             self.output[i][0:self.l] = self.X[i]
             self.output[i][self.l] = self.predict(self.X[i])
-            self.output[i][self.l + 2] = self.Y[i]
             
     # functies
     def sigma(self, x):
@@ -62,10 +61,19 @@ class TwoLayerNeuralNetwork():
     def printeind(self):        
         print("Nieuwe parameters na training: \n", self.p)
         print('Resultaten per voorbeeld:')
+        aantal_fout = 0
         for i in range(self.j):
             self.output[i][self.l + 1] = self.predict(self.X[i])
-            print('In: {0}, Oud uit: {1:.0f}, Nieuw uit: {2:.0f}, Correct uit: {2:.0f}'.format(self.output[i][0:self.l], self.output[i][self.l], self.output[i][self.l+1], self.output[i][self.l+2]))
-            
+            self.output[i][self.l + 2] = np.round(self.m * self.Y[i]) \
+                                         - self.output[i][self.l +1]
+            if self.output[i][self.l + 2] != 0:
+                aantal_fout += 1
+            #print('In: {0}, Oud uit: {1:.0f}, Nieuw uit: {2:.0f}, Verschil nieuw en correct: {3:.0f}'.\
+                  format(self.output[i][0:self.l], self.output[i][self.l],\
+                         self.output[i][self.l+1], self.output[i][self.l+2]))
+        print('Aantal verkeerd voorspelde antwoorden', aantal_fout)
+                                            
     def predict(self, invoer):
         """ voorspelt een uitvoer voor de gegeven invoer """
         return np.round(self.m*self.bereken_y(invoer, self.p))
+    
