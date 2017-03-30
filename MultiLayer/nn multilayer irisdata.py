@@ -28,4 +28,4 @@ with open('Iris.csv', newline='') as csvfile:
 # Dit is de trainingsdata
 
 netwerk = TwoLayerNeuralNetwork(3, X, Y, 10, 3)
-netwerk.train(1000, 0.1)
+netwerk.train(100, 0.1)

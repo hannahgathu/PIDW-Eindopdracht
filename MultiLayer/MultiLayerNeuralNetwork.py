@@ -1,7 +1,7 @@
 import autograd.numpy as np # om autograd te kunnen gebruiken
 from autograd import grad
 
-class TwoLayerNeuralNetwork():
+class MultiLayerNeuralNetwork():
     """ Neuraal netwerk met één verborgen laag:
         k is het aantal eenheden in de verborgen laag
         X is de invoer van data om te leren,
@@ -69,8 +69,7 @@ class TwoLayerNeuralNetwork():
             if self.output[i][self.l + 2] != 0:
                 aantal_fout += 1
             #print('In: {0}, Oud uit: {1:.0f}, Nieuw uit: {2:.0f}, Verschil nieuw en correct: {3:.0f}'.\
-                  format(self.output[i][0:self.l], self.output[i][self.l],\
-                         self.output[i][self.l+1], self.output[i][self.l+2]))
+                  #format(self.output[i][0:self.l], self.output[i][self.l], self.output[i][self.l+1], self.output[i][self.l+2]))
         print('Aantal verkeerd voorspelde antwoorden', aantal_fout)
                                             
     def predict(self, invoer):
