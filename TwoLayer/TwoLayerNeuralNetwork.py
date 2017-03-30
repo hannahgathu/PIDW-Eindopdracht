@@ -17,9 +17,10 @@ class TwoLayerNeuralNetwork():
         self.k = k
         #p is een lijst met beginschattingen voor de gewichten [w1,w2,...wn,b]
         self.p = np.random.random(w_len + b_len)
-        self.X = np.round(X/n, 1)
-        self.Y = np.round(Y/m, 1)
-        self.m = m
+        self.m = np.max(Y)
+        self.n = np.max(X)
+        self.X = np.round(X/self.n, 1)
+        self.Y = np.round(Y/self.m, 1)
         self.output = np.zeros((self.j, self.l + 3))
         self.printbegin()
 
@@ -28,7 +29,7 @@ class TwoLayerNeuralNetwork():
         for i in range(self.j):
             self.output[i][0:self.l] = self.X[i]
             self.output[i][self.l] = self.predict(self.X[i])
-            
+
     # functies
     def sigma(self, x):
         """ activatiefunctie sigma """
@@ -56,9 +57,11 @@ class TwoLayerNeuralNetwork():
             gradient_functie = grad(self.fout)
             gradient = gradient_functie(self.p)
             self.p = self.p - alfa * gradient
+            if i%round(0.1*iteraties) is 0:
+                print((i+1)*round(0.1*iteraties), "/", iteraties, "iteraties gedaan") # print voortgang
         self.printeind()
-                
-    def printeind(self):        
+
+    def printeind(self):
         print("Nieuwe parameters na training: \n", self.p)
         print('Resultaten per voorbeeld:')
         aantal_fout = 0
@@ -66,13 +69,12 @@ class TwoLayerNeuralNetwork():
             self.output[i][self.l + 1] = self.predict(self.X[i])
             self.output[i][self.l + 2] = np.round(self.m * self.Y[i]) \
                                          - self.output[i][self.l +1]
-            if self.output[i][self.l + 2] != 0:
+            if self.output[i][-1] != 0:
                 aantal_fout += 1
             #print('In: {0}, Oud uit: {1:.0f}, Nieuw uit: {2:.0f}, Verschil nieuw en correct: {3:.0f}'.\
                   #format(self.output[i][0:self.l], self.output[i][self.l], self.output[i][self.l+1], self.output[i][self.l+2]))
         print('Aantal verkeerd voorspelde antwoorden', aantal_fout)
-                                            
+
     def predict(self, invoer):
         """ voorspelt een uitvoer voor de gegeven invoer """
         return np.round(self.m*self.bereken_y(invoer, self.p))
-    
