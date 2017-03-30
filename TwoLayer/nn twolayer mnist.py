@@ -5,11 +5,11 @@ from read_ubyte import ReadImages
 from read_ubyte import ReadLabels
 
 Y = 1/9 * ReadLabels('t10k-labels.idx1-ubyte')
-X = 255 * ReadImages('t10k-images.idx3-ubyte')
+X = 1/255 * ReadImages('t10k-images.idx3-ubyte')
 
 n = TwoLayerNeuralNetwork(100, X, Y, 1, 1)
 print("Training...")
-n.train(10, 0.01)
+n.train(100, 0.01)
 print("Klaar")
 uit = np.zeros(np.shape(X)[0])
 verschil = np.zeros(np.shape(X)[0])
