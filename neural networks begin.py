@@ -19,14 +19,14 @@ print('Output after training : ', 1/(1+np.exp(-(np.dot(X,n.p[:-1]) + n.p[-1]))))
 
 
 
-# invoer voor EN operatie (traininginput)
-X = np.array([  [0,0],
-                [0,1],
-                [1,0],
-                [1,1]])
-    
-# uitvoer EN (trainingoutput)       
-y = np.array([0,0,0,1])
+### invoer voor EN operatie (traininginput)
+##X = np.array([  [0,0],
+##                [0,1],
+##                [1,0],
+##                [1,1]])
+##    
+### uitvoer EN (trainingoutput)       
+##y = np.array([0,0,0,1])
     
 n = NeuralNetwork([1,1,1], 0, 1e1)
 n.train(X, y)
