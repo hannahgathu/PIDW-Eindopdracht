@@ -1,5 +1,5 @@
 import numpy as np
-from NeuralNetwork import NeuralNetwork
+from SingeLayer\NeuralNetwork import NeuralNetwork
 
 # invoer voor OF operatie (traininginput)
 X = np.array([  [0,0],
