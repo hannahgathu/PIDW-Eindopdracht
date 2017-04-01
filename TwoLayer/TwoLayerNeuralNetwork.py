@@ -1,5 +1,6 @@
 import autograd.numpy as np # om autograd te kunnen gebruiken
 from autograd import grad
+from time import perf_counter
 
 class TwoLayerNeuralNetwork():
     """ Neuraal netwerk met één verborgen laag:
@@ -22,7 +23,7 @@ class TwoLayerNeuralNetwork():
         self.X = np.round(X/self.n, 1)
         self.Y = np.round(Y/self.m, 1)
         self.output = np.zeros((self.j, self.l + 3))
-        self.printbegin()
+        # self.printbegin()
 
     def printbegin(self):
         print("\nOude parameters:  \n", self.p)
@@ -42,13 +43,22 @@ class TwoLayerNeuralNetwork():
         verschil = y_uit - self.Y
         return np.dot(verschil, verschil)
 
-    def bereken_y(self, invoer, p):
+    def bereken_y_oud(self, invoer, p):
         s_uit = p[-1]
         for eenheid in range(self.k):
             wi = p[eenheid*self.l:(eenheid+1)*self.l] # gewichten
             si = np.dot(invoer, wi) + p[-(self.k+1)+eenheid] # inp + bias
             yt = self.sigma(si)
             s_uit = s_uit + p[-(2*self.k+1)+eenheid] * yt # totaal + weging * y
+        return self.sigma(s_uit)
+
+    def bereken_y(self, invoer, p):
+        w = p[:-(2*self.k+1)] # neem alle gewichten
+        w = np.reshape(w, [self.l, -1]) # maak een matrix
+        d = np.dot(invoer, w) # matrix product invoer en w
+        b = np.tile(p[-(self.k+1):-1], (np.shape(d)[0],1)) # bias
+        s = b + d
+        s_uit = np.sum(s, axis=1) + p[-1]
         return self.sigma(s_uit)
 
     def train(self, iteraties, alfa):
@@ -79,3 +89,22 @@ class TwoLayerNeuralNetwork():
     def predict(self, invoer):
         """ voorspelt een uitvoer voor de gegeven invoer """
         return np.round(self.m*self.bereken_y(invoer, self.p))
+
+
+if __name__ == "__main__":
+    X = np.array([[0,0,0], [0,0,1], [0,1,0], [0,1,1], [1,0,0], [1,0,1], [1,1,0], [1,1,1]])
+    Y = np.array([0, 0, 0, 1, 0, 1, 1, 1])# minimaal 2
+
+    netwerk = TwoLayerNeuralNetwork(10, X, Y, 1, 1)
+    print("nieuw")
+    t1 = perf_counter()
+    print(netwerk.bereken_y(netwerk.X, netwerk.p))
+    t2 = perf_counter()
+    print("Tijd:", t2-t1)
+
+
+    print("oud")
+    t3 = perf_counter()
+    print(netwerk.bereken_y_oud(netwerk.X, netwerk.p))
+    t4 = perf_counter()
+    print("Tijd:", t4-t3)
