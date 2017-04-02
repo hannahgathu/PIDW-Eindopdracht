@@ -50,15 +50,19 @@ class TwoLayerNeuralNetwork():
             si = np.dot(invoer, wi) + p[-(self.k+1)+eenheid] # inp + bias
             yt = self.sigma(si)
             s_uit = s_uit + p[-(2*self.k+1)+eenheid] * yt # totaal + weging * y
+        # print(np.sort(s_uit)) # voor testen
         return self.sigma(s_uit)
 
     def bereken_y(self, invoer, p):
-        w = p[:-(2*self.k+1)] # neem alle gewichten
-        w = np.reshape(w, [self.l, -1]) # maak een matrix
-        d = np.dot(invoer, w) # matrix product invoer en w
-        b = np.tile(p[-(self.k+1):-1], (np.shape(d)[0],1)) # bias
-        s = b + d
-        s_uit = np.sum(s, axis=1) + p[-1]
+        if len(np.shape(invoer)) is 1: # this makes a two-dim matrix from a list
+            invoer = np.array([invoer])
+        w = p[:-(2*self.k+1)] # neem alle gewichten van input naar laag
+        w = np.reshape(w, [np.shape(invoer)[-1], -1], 'F') # maak een matrix: rij<>l ; kol<>k
+        d = np.dot(invoer, w) # matrix product invoer en w: rij<>j ; kol<>k
+        b = np.tile(p[-(self.k+1):-1], (np.shape(d)[0],1)) # maak array met bias vlnr
+        y = self.sigma(b + d) # bepaal y = sigma(<x,w> + b) voor alle k en j
+        yw = y * self.p[-(2*self.k+1):-(self.k+1)] # bepaal y * w`
+        s_uit = p[-1] + np.sum(yw, axis=1) # sommeer rijen en voeg b_out toe
         return self.sigma(s_uit)
 
     def train(self, iteraties, alfa):
@@ -70,7 +74,6 @@ class TwoLayerNeuralNetwork():
             if i%round(0.1*iteraties) is 0:
                 print(i, "/", iteraties, "iteraties gedaan") # print voortgang
         print(iteraties, "/", iteraties, "iteraties gedaan") # print voortgang
-        self.printeind()
 
     def printeind(self):
         print("Nieuwe parameters na training: \n", self.p)
@@ -95,16 +98,26 @@ if __name__ == "__main__":
     X = np.array([[0,0,0], [0,0,1], [0,1,0], [0,1,1], [1,0,0], [1,0,1], [1,1,0], [1,1,1]])
     Y = np.array([0, 0, 0, 1, 0, 1, 1, 1])# minimaal 2
 
-    netwerk = TwoLayerNeuralNetwork(10, X, Y, 1, 1)
+    testaantal, testlengte = 300, 20
+    X = np.random.random([testaantal, testlengte])
+    Y = np.random.random(np.shape(X)[-1])
+
+    netwerk = TwoLayerNeuralNetwork(5, X, Y, 1, 1)
+
     print("nieuw")
     t1 = perf_counter()
+    a = (netwerk.p)
     print(netwerk.bereken_y(netwerk.X, netwerk.p))
+    print(netwerk.predict(netwerk.X[0]))
     t2 = perf_counter()
     print("Tijd:", t2-t1)
 
 
     print("oud")
     t3 = perf_counter()
+    b = (netwerk.p)
     print(netwerk.bereken_y_oud(netwerk.X, netwerk.p))
+    print(netwerk.predict(netwerk.X[0]))
     t4 = perf_counter()
     print("Tijd:", t4-t3)
+
