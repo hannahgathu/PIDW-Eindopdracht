@@ -1,3 +1,5 @@
+""" test bestand voor mnist-data """
+
 import autograd.numpy as np
 from autograd import grad
 from TwoLayerNeuralNetwork import TwoLayerNeuralNetwork
@@ -10,10 +12,10 @@ TrainImages = ReadImages('train-images.idx3-ubyte', 60000)
 TestLabels = ReadLabels('t10k-labels.idx1-ubyte', 10000)
 TestImages = ReadImages('t10k-images.idx3-ubyte', 10000)
 
-n = TwoLayerNeuralNetwork(10, TrainImages, TrainLabels)
+n = TwoLayerNeuralNetwork(2, TrainImages, TrainLabels)
 
 print("Training...")
-n.train(50, 0.1)
+n.train(50, 0.01)
 print("Klaar")
 
 print("Test traindata")

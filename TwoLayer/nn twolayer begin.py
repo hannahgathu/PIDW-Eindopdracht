@@ -1,21 +1,4 @@
 """ Begin van meerdere lagen
-(zie bijgevoegde afbeelding?)
-
-# één verborgen laag werkt
-
-KLAAR:
-sigmoid
-predict
-fout
-train (+ gradient)
-uitbreiden naar meer input
-uitbreiden naar meer verborgen eenheden
-
-TODO:
-uitbreiden naar meer lagen
-
-opruimen van niet nuttige code?
-optimaliseren?
 
 in dit bestand wordt autograd gebruikt (installatie: pip install autograd)
 zie ook https://github.com/HIPS/autograd
