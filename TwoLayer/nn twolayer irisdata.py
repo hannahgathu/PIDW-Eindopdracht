@@ -12,7 +12,7 @@ with open('Iris.csv', newline='') as csvfile:
      reader = csv.reader(csvfile, delimiter=',')
      #skip headers
      next(reader, None)
-   
+
      #loop over rows
      for row in reader:
          #index
@@ -27,5 +27,5 @@ with open('Iris.csv', newline='') as csvfile:
 # and y contains 150 labels (1, 2, 3)
 # Dit is de trainingsdata
 
-netwerk = TwoLayerNeuralNetwork(3, X, Y, 10, 3)
+netwerk = TwoLayerNeuralNetwork(3, X, Y)
 netwerk.train(10000, 0.1)

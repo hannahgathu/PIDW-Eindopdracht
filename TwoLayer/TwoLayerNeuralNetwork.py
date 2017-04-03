@@ -1,5 +1,6 @@
 import autograd.numpy as np # om autograd te kunnen gebruiken
 from autograd import grad
+from time import perf_counter
 
 class TwoLayerNeuralNetwork():
     """ Neuraal netwerk met één verborgen laag:
@@ -9,7 +10,7 @@ class TwoLayerNeuralNetwork():
         n is het getal waarmee X genormaliseerd wordt
         m is het getal waarmee Y genormaliseerd wordt
         """
-    def __init__(self, k, X, Y, n, m):
+    def __init__(self, k, X, Y):
         self.l = np.shape(X)[-1] #lengte van 1 input
         self.j = np.size(Y) #aantal voorbeelden
         w_len = k * (self.l + 1)
@@ -22,13 +23,23 @@ class TwoLayerNeuralNetwork():
         self.X = np.round(X/self.n, 1)
         self.Y = np.round(Y/self.m, 1)
         self.output = np.zeros((self.j, self.l + 3))
-        self.printbegin()
+        self.printinit()
+        # self.printbegin()
 
     def printbegin(self):
+        """ print oude parameters en zet invoer en initiele voorspelling in een lijst 'output' """
         print("\nOude parameters:  \n", self.p)
         for i in range(self.j):
             self.output[i][0:self.l] = self.X[i]
             self.output[i][self.l] = self.predict(self.X[i])
+
+    def printinit(self):
+        """ print een aantal eigenschappen van het netwerk """
+        print("Nieuw neuraal netwerk gemaakt met 1 verborgen laag, met daarin {0} eenheden."
+              .format(self.k))
+        print("De testdata bestaat uit {0} voorbeelden met {1} waarden."
+              .format(self.j, self.l))
+        print()
 
     # functies
     def sigma(self, x):
@@ -36,13 +47,13 @@ class TwoLayerNeuralNetwork():
         return 1/(1+np.exp(-x))
 
     def fout(self, p):
-        """ bepaalt de fout met als variabelen de gewichten en bias
-        """
+        """ bepaal de fout met als variabelen de gewichten en bias """
         y_uit = self.bereken_y(self.X, p)
         verschil = y_uit - self.Y
         return np.dot(verschil, verschil)
 
-    def bereken_y(self, invoer, p):
+    def bereken_y_oud(self, invoer, p):
+        """ bereken de uitvoer van het netwerk middels een forloop """
         s_uit = p[-1]
         for eenheid in range(self.k):
             wi = p[eenheid*self.l:(eenheid+1)*self.l] # gewichten
@@ -51,16 +62,34 @@ class TwoLayerNeuralNetwork():
             s_uit = s_uit + p[-(2*self.k+1)+eenheid] * yt # totaal + weging * y
         return self.sigma(s_uit)
 
+    def bereken_y(self, invoer, p):
+        """ bereken de uitvoer van het netwerk """
+        if len(np.shape(invoer)) is 1: # this makes a two-dim matrix from a list
+            invoer = np.array([invoer])
+        w = p[:-(2*self.k+1)] # neem alle gewichten van input naar laag
+        w = np.reshape(w, [np.shape(invoer)[-1], -1], 'F') # maak een matrix: rij<>l ; kol<>k
+        d = np.dot(invoer, w) # matrix product invoer en w: rij<>j ; kol<>k
+        b = np.tile(p[-(self.k+1):-1], (np.shape(d)[0],1)) # maak array met bias vlnr
+        y = self.sigma(b + d) # bepaal y = sigma(<x,w> + b) voor alle k en j
+        yw = y * self.p[-(2*self.k+1):-(self.k+1)] # bepaal y * w`
+        s_uit = p[-1] + np.sum(yw, axis=1) # sommeer rijen en voeg bias_out toe
+        return self.sigma(s_uit)
+
     def train(self, iteraties, alfa):
         """ train netwerk met gegeven invoer en gegeven uitvoer """
+        print("Het netwerk wordt nu '{} keer getraind', met alpha = {}.".format(iteraties, alfa))
         for i in range(iteraties):
             gradient_functie = grad(self.fout)
             gradient = gradient_functie(self.p)
             self.p = self.p - alfa * gradient
-            if i%round(0.1*iteraties) is 0:
+            if i%np.int(np.ceil(0.1*iteraties)) == 0:
                 print(i, "/", iteraties, "iteraties gedaan") # print voortgang
+                # print(gradient)
+                # print(self.p)
+                # print(np.shape(gradient))
+                # print(np.shape(self.p))
         print(iteraties, "/", iteraties, "iteraties gedaan") # print voortgang
-        self.printeind()
+        print()
 
     def printeind(self):
         print("Nieuwe parameters na training: \n", self.p)
@@ -77,5 +106,42 @@ class TwoLayerNeuralNetwork():
         print('Aantal verkeerd voorspelde antwoorden', aantal_fout)
 
     def predict(self, invoer):
-        """ voorspelt een uitvoer voor de gegeven invoer """
+        """ voorspel een uitvoer voor de gegeven invoer """
         return np.round(self.m*self.bereken_y(invoer, self.p))
+
+
+def main():
+    print("Maak een neuraal netwerk:")
+
+    testaantal, testlengte = 50, 28*28
+    X = np.random.random([testaantal, testlengte])
+    Y = np.random.random(np.shape(X)[0])
+
+    global netwerk
+    netwerk = TwoLayerNeuralNetwork(5, X, Y)
+    netwerk.train(100, 0.1)
+    netwerk.predict(X[0])
+
+
+def test_bereken_y():
+    print("test_bereken_y")
+    print("nieuw")
+    t1 = perf_counter()
+    a = (netwerk.p)
+    print(netwerk.bereken_y(netwerk.X, netwerk.p))
+    print(netwerk.predict(netwerk.X[0]))
+    t2 = perf_counter()
+    print("Tijd:", t2-t1)
+
+    print("\noud")
+    t3 = perf_counter()
+    b = (netwerk.p)
+    print(netwerk.bereken_y_oud(netwerk.X, netwerk.p))
+    print(netwerk.predict(netwerk.X[0]))
+    t4 = perf_counter()
+    print("Tijd:", t4-t3)
+
+
+if __name__ == "__main__":
+    main()
+    # test_bereken_y()
