@@ -82,8 +82,12 @@ class TwoLayerNeuralNetwork():
             gradient_functie = grad(self.fout)
             gradient = gradient_functie(self.p)
             self.p = self.p - alfa * gradient
-            if i%round(0.1*iteraties) is 0:
+            if i%np.int(np.ceil(0.1*iteraties)) == 0:
                 print(i, "/", iteraties, "iteraties gedaan") # print voortgang
+                # print(gradient)
+                # print(self.p)
+                # print(np.shape(gradient))
+                # print(np.shape(self.p))
         print(iteraties, "/", iteraties, "iteraties gedaan") # print voortgang
         print()
 
