@@ -96,16 +96,21 @@ class TwoLayerNeuralNetwork():
         return np.round(self.m*self.bereken_y(invoer, self.p))
 
 
-if __name__ == "__main__":
-    X = np.array([[0,0,0], [0,0,1], [0,1,0], [0,1,1], [1,0,0], [1,0,1], [1,1,0], [1,1,1]])
-    Y = np.array([0, 0, 0, 1, 0, 1, 1, 1])# minimaal 2
+def main():
+    print("Maak een neuraal netwerk:")
 
-    testaantal, testlengte = 300, 20
+    testaantal, testlengte = 50, 28*28
     X = np.random.random([testaantal, testlengte])
-    Y = np.random.random(np.shape(X)[-1])
+    Y = np.random.random(np.shape(X)[0])
 
-    netwerk = TwoLayerNeuralNetwork(5, X, Y, 1, 1)
+    global netwerk
+    netwerk = TwoLayerNeuralNetwork(5, X, Y)
+    netwerk.train(100, 0.1)
+    netwerk.predict(X[0])
 
+
+def test_bereken_y():
+    print("test_bereken_y")
     print("nieuw")
     t1 = perf_counter()
     a = (netwerk.p)
@@ -114,8 +119,7 @@ if __name__ == "__main__":
     t2 = perf_counter()
     print("Tijd:", t2-t1)
 
-
-    print("oud")
+    print("\noud")
     t3 = perf_counter()
     b = (netwerk.p)
     print(netwerk.bereken_y_oud(netwerk.X, netwerk.p))
@@ -123,3 +127,7 @@ if __name__ == "__main__":
     t4 = perf_counter()
     print("Tijd:", t4-t3)
 
+
+if __name__ == "__main__":
+    main()
+    # test_bereken_y()
