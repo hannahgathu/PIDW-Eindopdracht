@@ -60,7 +60,6 @@ class TwoLayerNeuralNetwork():
             si = np.dot(invoer, wi) + p[-(self.k+1)+eenheid] # inp + bias
             yt = self.sigma(si)
             s_uit = s_uit + p[-(2*self.k+1)+eenheid] * yt # totaal + weging * y
-        # print(np.sort(s_uit)) # voor testen
         return self.sigma(s_uit)
 
     def bereken_y(self, invoer, p):
@@ -78,7 +77,7 @@ class TwoLayerNeuralNetwork():
 
     def train(self, iteraties, alfa):
         """ train netwerk met gegeven invoer en gegeven uitvoer """
-        print("Het netwerk wordt nu '{} keer' getraind, met alpha = {}.".format(iteraties, alfa))
+        print("Het netwerk wordt nu '{} keer getraind', met alpha = {}.".format(iteraties, alfa))
         for i in range(iteraties):
             gradient_functie = grad(self.fout)
             gradient = gradient_functie(self.p)
@@ -103,7 +102,7 @@ class TwoLayerNeuralNetwork():
         print('Aantal verkeerd voorspelde antwoorden', aantal_fout)
 
     def predict(self, invoer):
-        """ voorspelt een uitvoer voor de gegeven invoer """
+        """ voorspel een uitvoer voor de gegeven invoer """
         return np.round(self.m*self.bereken_y(invoer, self.p))
 
 
