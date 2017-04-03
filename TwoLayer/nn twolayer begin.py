@@ -35,8 +35,5 @@ X = np.array([[0,0,0], [0,0,1], [0,1,0], [0,1,1], [1,0,0], [1,0,1], [1,1,0], [1,
 #Y = np.array([0, 1, 1, 1, 1, 1, 1, 1]) # minimaal 1
 Y = np.array([0, 0, 0, 1, 0, 1, 1, 1])# minimaal 2
 
-netwerk = TwoLayerNeuralNetwork(10, X, Y, 1, 1)
+netwerk = TwoLayerNeuralNetwork(10, X, Y)
 netwerk.train(100, 1e0)
-
- 
-

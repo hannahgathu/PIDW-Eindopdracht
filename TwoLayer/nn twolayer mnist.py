@@ -10,7 +10,7 @@ TrainImages = ReadImages('train-images.idx3-ubyte', 60000)
 TestLabels = ReadLabels('t10k-labels.idx1-ubyte', 10000)
 TestImages = ReadImages('t10k-images.idx3-ubyte', 10000)
 
-n = TwoLayerNeuralNetwork(10, TrainImages, TrainLabels, 1, 1)
+n = TwoLayerNeuralNetwork(10, TrainImages, TrainLabels)
 
 print("Training...")
 n.train(50, 0.1)
