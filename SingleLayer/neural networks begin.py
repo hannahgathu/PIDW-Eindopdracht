@@ -8,17 +8,18 @@ X = np.array([  [0,0],
                 [1,1]])
     
 # uitvoer OF (trainingoutput)       
-y = np.array([0,1,1,1])
+Y = np.array([0,1,1,1])
     
-n = NeuralNetwork([1,1,1], 2, 1e1)
-n.train(X, y)
+n = NeuralNetwork(X, Y)
+n.train(1000, 1e1)
 print(n.predict([1,1]))
 print('Weights               : ', n.p)
-print('Output training data  : ', y)
+print('Output training data  : ', Y)
 print('Output after training : ', 1/(1+np.exp(-(np.dot(X,n.p[:-1]) + n.p[-1]))))
 
 
 
+<<<<<<< HEAD:neural networks begin.py
 ### invoer voor EN operatie (traininginput)
 ##X = np.array([  [0,0],
 ##                [0,1],
@@ -27,11 +28,21 @@ print('Output after training : ', 1/(1+np.exp(-(np.dot(X,n.p[:-1]) + n.p[-1]))))
 ##    
 ### uitvoer EN (trainingoutput)       
 ##y = np.array([0,0,0,1])
+=======
+# invoer voor EN operatie (traininginput)
+X = np.array([  [0,0],
+                [0,1],
+                [1,0],
+                [1,1]])
     
-n = NeuralNetwork([1,1,1], 0, 1e1)
-n.train(X, y)
+# uitvoer EN (trainingoutput)       
+Y = np.array([0,0,0,1])
+>>>>>>> origin/master:SingleLayer/neural networks begin.py
+    
+n = NeuralNetwork(X, Y)
+n.train(1000, 1e1)
 print(n.predict([1,1]))
 print('Weights               : ', n.p)
-print('Output training data  : ', y)
+print('Output training data  : ', Y)
 print('Output after training : ', 1/(1+np.exp(-(np.dot(X,n.p[:-1]) + n.p[-1]))))
    
