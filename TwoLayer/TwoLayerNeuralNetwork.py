@@ -10,7 +10,7 @@ class TwoLayerNeuralNetwork():
         n is het getal waarmee X genormaliseerd wordt
         m is het getal waarmee Y genormaliseerd wordt
         """
-    def __init__(self, k, X, Y, n, m):
+    def __init__(self, k, X, Y):
         self.l = np.shape(X)[-1] #lengte van 1 input
         self.j = np.size(Y) #aantal voorbeelden
         w_len = k * (self.l + 1)
@@ -26,6 +26,7 @@ class TwoLayerNeuralNetwork():
         # self.printbegin()
 
     def printbegin(self):
+        """ print oude parameters en zet invoer en initiele voorspelling in een lijst 'output' """
         print("\nOude parameters:  \n", self.p)
         for i in range(self.j):
             self.output[i][0:self.l] = self.X[i]
@@ -37,13 +38,13 @@ class TwoLayerNeuralNetwork():
         return 1/(1+np.exp(-x))
 
     def fout(self, p):
-        """ bepaalt de fout met als variabelen de gewichten en bias
-        """
+        """ bepaal de fout met als variabelen de gewichten en bias """
         y_uit = self.bereken_y(self.X, p)
         verschil = y_uit - self.Y
         return np.dot(verschil, verschil)
 
     def bereken_y_oud(self, invoer, p):
+        """ bereken de uitvoer van het netwerk middels een forloop """
         s_uit = p[-1]
         for eenheid in range(self.k):
             wi = p[eenheid*self.l:(eenheid+1)*self.l] # gewichten
@@ -54,6 +55,7 @@ class TwoLayerNeuralNetwork():
         return self.sigma(s_uit)
 
     def bereken_y(self, invoer, p):
+        """ bereken de uitvoer van het netwerk """
         if len(np.shape(invoer)) is 1: # this makes a two-dim matrix from a list
             invoer = np.array([invoer])
         w = p[:-(2*self.k+1)] # neem alle gewichten van input naar laag
@@ -62,7 +64,7 @@ class TwoLayerNeuralNetwork():
         b = np.tile(p[-(self.k+1):-1], (np.shape(d)[0],1)) # maak array met bias vlnr
         y = self.sigma(b + d) # bepaal y = sigma(<x,w> + b) voor alle k en j
         yw = y * self.p[-(2*self.k+1):-(self.k+1)] # bepaal y * w`
-        s_uit = p[-1] + np.sum(yw, axis=1) # sommeer rijen en voeg b_out toe
+        s_uit = p[-1] + np.sum(yw, axis=1) # sommeer rijen en voeg bias_out toe
         return self.sigma(s_uit)
 
     def train(self, iteraties, alfa):
