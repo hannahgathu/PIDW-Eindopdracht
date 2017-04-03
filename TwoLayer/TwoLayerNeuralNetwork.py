@@ -23,6 +23,7 @@ class TwoLayerNeuralNetwork():
         self.X = np.round(X/self.n, 1)
         self.Y = np.round(Y/self.m, 1)
         self.output = np.zeros((self.j, self.l + 3))
+        self.printinit()
         # self.printbegin()
 
     def printbegin(self):
@@ -31,6 +32,14 @@ class TwoLayerNeuralNetwork():
         for i in range(self.j):
             self.output[i][0:self.l] = self.X[i]
             self.output[i][self.l] = self.predict(self.X[i])
+
+    def printinit(self):
+        """ print een aantal eigenschappen van het netwerk """
+        print("Nieuw neuraal netwerk gemaakt met 1 verborgen laag, met daarin {0} eenheden."
+              .format(self.k))
+        print("De testdata bestaat uit {0} voorbeelden met {1} waarden."
+              .format(self.j, self.l))
+        print()
 
     # functies
     def sigma(self, x):
@@ -69,6 +78,7 @@ class TwoLayerNeuralNetwork():
 
     def train(self, iteraties, alfa):
         """ train netwerk met gegeven invoer en gegeven uitvoer """
+        print("Het netwerk wordt nu '{} keer' getraind, met alpha = {}.".format(iteraties, alfa))
         for i in range(iteraties):
             gradient_functie = grad(self.fout)
             gradient = gradient_functie(self.p)
@@ -76,6 +86,7 @@ class TwoLayerNeuralNetwork():
             if i%round(0.1*iteraties) is 0:
                 print(i, "/", iteraties, "iteraties gedaan") # print voortgang
         print(iteraties, "/", iteraties, "iteraties gedaan") # print voortgang
+        print()
 
     def printeind(self):
         print("Nieuwe parameters na training: \n", self.p)
