@@ -5,17 +5,19 @@ from time import perf_counter
 class TwoLayerNeuralNetwork():
     """ Neuraal netwerk met één verborgen laag:
         k is het aantal eenheden in de verborgen laag
-        X is de invoer van data om te leren,
+        X is de invoer van data om te leren
+        f is het aantal features per invoer 
         Y is de bekende uitvoer bij de testdata
         n is het getal waarmee X genormaliseerd wordt
         m is het getal waarmee Y genormaliseerd wordt
         """
     def __init__(self, k, X, Y):
-        self.l = np.shape(X)[-1] #lengte van 1 input
-        self.j = np.size(Y) #aantal voorbeelden
-        w_len = k * (self.l + 1) #aantal connecties = aantal weigths
+        self.f = np.shape(X)[-1] #lengte van 1 input
+        self.v = np.size(Y) #aantal voorbeelden
+        w_0_len = k * self.f  #aantal connecties in laag 0 = aantal gewichten in laag 0
+        w-1_len = k # aantal connecties in laatste laag (in dit geval laag 1)
         b_len = k + 1 #aantal neuronen = aantal biassen
-        self.k = k
+        self.k = k #
         #p is een lijst met beginschattingen voor de gewichten [w1,w2,...wn,b]
         self.p = np.random.random(w_len + b_len)
         self.m = np.max(Y)
@@ -92,6 +94,7 @@ class TwoLayerNeuralNetwork():
 
     def predict(self, invoer):
         """ voorspel een uitvoer voor de gegeven invoer """
+        #print(self.bereken_y(invoer, self.p))
         return np.round(self.m*self.bereken_y(invoer, self.p))
 
 
