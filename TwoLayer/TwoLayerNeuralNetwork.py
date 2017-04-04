@@ -4,14 +4,19 @@ from time import perf_counter
 
 class TwoLayerNeuralNetwork():
     """ Neuraal netwerk met één verborgen laag:
-        k is het aantal eenheden in de verborgen laag
-        X is de invoer van data om te leren
-        f is het aantal features per invoer 
+        X is een lijst van lijsten, dit is de invoer van data om te leren
+        f is het aantal features per invoer(dus de lengte van de lijsten in  X)
+        W is een lijst met met alle w_i's
+        w_i is een matrix met de gewichten van de connecties in laag i
+        B is een lijst met de biassen van alle neuronen
         Y is de bekende uitvoer bij de testdata
+        v is het aantal voorbeelden
         n is het getal waarmee X genormaliseerd wordt
         m is het getal waarmee Y genormaliseerd wordt
         """
     def __init__(self, k, X, Y):
+        self.n = np.max(X)
+        self.X = np.round(X/self.n, 1)
         self.f = np.shape(X)[-1] #lengte van 1 input
         self.v = np.size(Y) #aantal voorbeelden
         w_0_len = k * self.f  #aantal connecties in laag 0 = aantal gewichten in laag 0
@@ -21,9 +26,8 @@ class TwoLayerNeuralNetwork():
         #p is een lijst met beginschattingen voor de gewichten [w1,w2,...wn,b]
         self.p = np.random.random(w_len + b_len)
         self.m = np.max(Y)
-        self.n = np.max(X)
-        self.X = np.round(X/self.n, 1)
         self.Y = np.round(Y/self.m, 1)
+
         self.output = np.zeros((self.j, self.l + 3))
         self.printinit()
         self.vul_output()
