@@ -6,6 +6,7 @@ class TwoLayerNeuralNetwork():
     """ Neuraal netwerk met één verborgen laag:
         X is een lijst van lijsten, dit is de invoer van data om te leren
         f is het aantal features per invoer(dus de lengte van de lijsten in  X)
+        l is het aantal lagen (in dit geval 2)
         W is een lijst met met alle w_i's
         w_i is een matrix met de gewichten van de connecties in laag i
         B is een lijst met de biassen van alle neuronen
@@ -18,18 +19,22 @@ class TwoLayerNeuralNetwork():
         self.n = np.max(X)
         self.X = np.round(X/self.n, 1)
         self.f = np.shape(X)[-1] #lengte van 1 input
+        self.l=2 #aantal lagen
         self.v = np.size(Y) #aantal voorbeelden
         w_0_len = k * self.f  #aantal connecties in laag 0 = aantal gewichten in laag 0
-        w-1_len = k # aantal connecties in laatste laag (in dit geval laag 1)
+        w_1_len = k # aantal connecties in laatste laag (in dit geval laag 1)
         b_len = k + 1 #aantal neuronen = aantal biassen
-        self.k = k #
-        #p is een lijst met beginschattingen voor de gewichten [w1,w2,...wn,b]
-        self.p = np.random.random(w_len + b_len)
+        self.k = k 
+        #W is een lijst met arrays met beginschattingen voor de gewichten in laag i [w_o,w_1]
+        self.w_0 = np.random.rand(self.k,self.f)
+        self.w_1 = np.random.random(self.k)
+        self.B=np.random.random(b_len)
+        self.W=[self.w_0,self.w_1,self.B]
         self.m = np.max(Y)
         self.Y = np.round(Y/self.m, 1)
 
-        self.output = np.zeros((self.j, self.l + 3))
-        self.printinit()
+        self.output = np.zeros((self.v, self.f + 3))
+        #self.printinit()
         self.vul_output()
 
     def printinit(self):
@@ -37,69 +42,67 @@ class TwoLayerNeuralNetwork():
         print("Nieuw neuraal netwerk gemaakt met 1 verborgen laag, met daarin {0} eenheden."
               .format(self.k))
         print("De testdata bestaat uit {0} voorbeelden met {1} waarden."
-              .format(self.j, self.l))
+              .format(self.v, self.f))
         print()
 
     def vul_output(self):
         """Vult output met de oude uitkomsten"""
-        for i in range(self.j):
-            self.output[i][0:self.l] = self.X[i]
-            self.output[i][self.l] = self.predict(self.X[i])[0]
+        for i in range(self.v):
+            self.output[i][0:self.f] = self.X[i]
+            self.output[i][self.f] = self.predict(self.X[i])
 
     def sigma(self, x):
         """ activatiefunctie sigma """
         return 1/(1+np.exp(-x))
 
-    def fout(self, p):
+    def fout(self, W):
         """ bepaal de fout met als variabelen de gewichten en bias """
-        y_uit = self.bereken_y(self.X, p)
+        y_uit = self.bereken_y(self.X, W)
+        #print(y_uit)
         verschil = y_uit - self.Y
         return np.dot(verschil, verschil)
 
-    def bereken_y(self, invoer, p):
-        """ bereken de uitvoer van het netwerk """
-        if len(np.shape(invoer)) is 1: # this makes a two-dim matrix from a list
-            invoer = np.array([invoer])
-        w = p[:-(2*self.k+1)] # neem alle gewichten van input naar laag
-        w = np.reshape(w, [self.l, -1], 'F') # maak een matrix: rij<>l ; kol<>k
-        d = np.dot(invoer, w) # matrix product invoer en w: rij<>j ; kol<>k
-        b = np.tile(p[-(self.k+1):-1], (self.j, 1)) # maak array met bias vlnr
-        y = self.sigma(b + d) # bepaal y = sigma(<x,w> + b) voor alle k en j
-        yw = y * self.p[-(2*self.k+1):-(self.k+1)] # bepaal y * w`
-        s_uit = p[-1] + np.sum(yw, axis=1) # sommeer rijen en voeg bias_out toe
-        return self.sigma(s_uit)
+    def bereken_y(self,invoer,W):
+        """ bereken de uitvoer van het netwerk middels een forloop """
+        b_uit = W[-1][-1]
+        for neuron in range(self.k):
+            si = np.dot(invoer, W[0][neuron]) + W[-1][neuron] # inp + bias
+            yt = self.sigma(si)
+            b_uit = b_uit + W[1][neuron] * yt # totaal + weging * y
+        return self.sigma(b_uit)
 
     def train(self, iteraties, alfa):
         """ train netwerk met gegeven invoer en gegeven uitvoer """
         print("Het netwerk wordt nu '{} keer getraind', met alpha = {}.".format(iteraties, alfa))
         for i in range(iteraties):
             gradient_functie = grad(self.fout)
-            gradient = gradient_functie(self.p)
-            self.p = self.p - alfa * gradient
+            gradient = gradient_functie(self.W)
+            for j in range(self.l+1):
+                self.W[j] = self.W[j] - alfa * gradient[j]
             if i%np.int(np.ceil(0.1*iteraties)) == 0:
                 print(i, "/", iteraties, "iteraties gedaan") # print voortgang
-        print(iteraties, "/", iteraties, "iteraties gedaan") # print voortgang
+        #print(iteraties, "/", iteraties, "iteraties gedaan") # print voortgang
         print()
         self.printeind()
 
     def printeind(self):
-        print("Nieuwe parameters na training: \n", self.p)
+        #print("Nieuwe parameters na training: \n", self.p)
         print('Resultaten per voorbeeld:')
         aantal_fout = 0
-        for i in range(self.j):
-            self.output[i][self.l + 1] = self.predict(self.X[i])[0]
-            self.output[i][self.l + 2] = np.round(self.m * self.Y[i]) \
-                                         - self.output[i][self.l +1]
+        for i in range(self.v):
+            self.output[i][self.f + 1] = self.predict(self.X[i])
+            self.output[i][self.f + 2] = np.round(self.m * self.Y[i]) \
+                                         - self.output[i][self.f +1]
             if self.output[i][-1] != 0:
                 aantal_fout += 1
             print('In: {0}, Oud uit: {1:.0f}, Nieuw uit: {2:.0f}, Verschil nieuw en correct: {3:.0f}'.\
-                  format(self.output[i][0:self.l], self.output[i][self.l], self.output[i][self.l+1], self.output[i][self.l+2]))
+                  format(self.output[i][0:self.f], self.output[i][self.f], self.output[i][self.f+1], self.output[i][self.f+2]))
         print('Aantal verkeerd voorspelde antwoorden', aantal_fout)
 
     def predict(self, invoer):
         """ voorspel een uitvoer voor de gegeven invoer """
-        #print(self.bereken_y(invoer, self.p))
-        return np.round(self.m*self.bereken_y(invoer, self.p))
+        #print("y:",self.bereken_y(invoer, self.W,self.B))
+        return np.round(self.m*self.bereken_y(invoer, self.W))
 
 
 def main():
