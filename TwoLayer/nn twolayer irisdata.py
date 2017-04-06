@@ -29,3 +29,4 @@ with open('Iris.csv', newline='') as csvfile:
 
 netwerk = TwoLayerNeuralNetwork(3, X, Y)
 netwerk.train(10000, 0.1)
+print(netwerk.predict([1,2,3,4]))
