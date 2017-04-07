@@ -9,4 +9,7 @@
         y = self.sigma(b + d) # bepaal y = sigma(<x,w> + b) voor alle k en j
         yw = y * self.p[-(2*self.k+1):-(self.k+1)] # bepaal y * w`
         s_uit = p[-1] + np.sum(yw, axis=1) # sommeer rijen en voeg bias_out toe
+        if np.size(s_uit) == 1:
+            # dit betekent ook dat van alle 'bereken_y[0]' de '[0]' weggehaald moet worden
+            s_uit = s_uit[0]
         return self.sigma(s_uit)
