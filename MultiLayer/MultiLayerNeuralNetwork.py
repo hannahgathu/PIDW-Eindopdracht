@@ -22,6 +22,7 @@ class MultiLayerNeuralNetwork():
         print("Nieuw neuraal netwerk gemaakt.")
         print(self)
 
+
     def __str__(self):
         s = "Neuraal netwerk heeft {} verborgen laag/lagen. ".format(len(self.k))
         s = s + "De lagen bevatten respectievelijk {} neuronen. ".format(self.k)
@@ -29,11 +30,13 @@ class MultiLayerNeuralNetwork():
             .format(self.j, self.l)
         return s
 
+
     def create_k(self, k):
         """ Zet 'k' in een goede vorm (lijst) als het een getal is"""
         if isinstance(k, int):
             return [k]
         return k
+
 
     def create_w(self):
         """ Maak een lijst met arrays (matrices) met gewichten.
@@ -47,6 +50,7 @@ class MultiLayerNeuralNetwork():
             w.append(w_i)
         return w
 
+
     def create_b(self):
         """ Maak een lijst met arrays met biassen.
         De arrays zijn vectoren met de biassen van één laag.
@@ -57,6 +61,7 @@ class MultiLayerNeuralNetwork():
             b_i = np.random.random(q[i])
             b.append(b_i)
         return b
+
 
     def export_parameters(self, bestand):
         """ Exporteer parameters """
@@ -69,6 +74,7 @@ class MultiLayerNeuralNetwork():
                             n=self.n, m=self.m, X=self.X, Y=self.Y
                            )
         print("Exporteren voltooid\n")
+
 
     def import_parameters(self, bestand):
         """ Importeer parameters uit een .npz bestand,
@@ -83,6 +89,7 @@ class MultiLayerNeuralNetwork():
         print("Het netwerk heeft nieuwe parameters:")
         print(self)
 
+
     def nieuwe_testdata(self, invoer, uitvoer):
         """ voeg data toe aan bestaande testdata """
         print("De nieuwe data wordt toegevoegd")
@@ -91,6 +98,7 @@ class MultiLayerNeuralNetwork():
         self.l = np.shape(self.X)[-1]
         self.j = np.size(self.Y)
         print("De testdata heeft nu {} voorbeelden".format(self.j))
+
 
     def reset_testdata(self, invoer, uitvoer):
         """ vervang bestaande testdata door nieuwe data """
@@ -101,17 +109,19 @@ class MultiLayerNeuralNetwork():
         self.j = np.size(self.Y)
         print("De testdata heeft nu {} voorbeelden".format(self.j))
 
+
     def sigma(self, x):
         """ activatiefunctie sigma """
         return 1/(1+np.exp(-x))
 
+
     def fout(self, p):
-         """ bepaalt de fout met als variabelen de gewichten en bias
-         """
-         y_uit = self.bereken_y(self.X, p)
-         verschil = np.transpose(y_uit) - self.Y
-         verschil = verschil.flatten()
-         return np.dot(verschil, verschil)
+        """ bepaal de fout met als variabelen de gewichten en bias """
+        y_uit = self.bereken_y(self.X, p)
+        verschil = np.transpose(y_uit) - self.Y
+        verschil = verschil.flatten()
+        return np.dot(verschil, verschil)
+
 
     def bereken_y(self, invoer, p):
         w = p[:len(self.k) + 1]
@@ -121,6 +131,7 @@ class MultiLayerNeuralNetwork():
             s = np.dot(yt, w[i]) + b[i]
             yt = self.sigma(s)
         return yt
+
 
     def train(self, iteraties, alfa):
         """ train netwerk met gegeven invoer en gegeven uitvoer """
@@ -186,15 +197,11 @@ class MultiLayerNeuralNetwork():
         return np.round(Y)
 
 
-
-
-
 def main():
     """ basis testen voor het netwerk """
-    netwerk = MultiLayerNeuralNetwork([4,5], np.array([[2,4,6],[3,5,7]]), np.array([1,2]))
+    netwerk = MultiLayerNeuralNetwork([4,5], np.array([[2,4,6], [3,5,7]]), np.array([1,2]))
     netwerk.train(1000, 2)
-    print(netwerk.predict([1,2,3]))
-    netwerk.bepaal_succes(netwerk.X, netwerk.Y)
+
 
 if __name__ == "__main__":
     main()
