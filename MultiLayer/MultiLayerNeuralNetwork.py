@@ -177,9 +177,9 @@ class MultiLayerNeuralNetwork():
             uitvoer = [uitvoer]
 
         aantal_fout = 0
-        for i in range(self.j):
-            a = self.predict(invoer[i])
-            b = np.round(self.m * self.Y[i])
+        for q in range(self.j):
+            a = self.predict(invoer[q])
+            b = np.round(self.m * self.Y[q])
             if a != b:
                 aantal_fout += 1
 
