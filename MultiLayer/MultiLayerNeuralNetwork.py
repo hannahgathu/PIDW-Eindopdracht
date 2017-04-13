@@ -1,13 +1,4 @@
-""" MultiLayerNeuralNetwork
-Klaar:
-create_k
-create_w
-create_b
-print_init
-sigma
-
-"""
-
+""" MultiLayerNeuralNetwork """
 import autograd.numpy as np # om autograd te kunnen gebruiken
 from autograd import grad
 
@@ -33,11 +24,11 @@ class MultiLayerNeuralNetwork():
         print(self)
 
     def __str__(self):
-        t = "Neuraal netwerk heeft {} verborgen la(a)g(en). ".format(len(self.k))
-        t = t + "De lagen bevatten respectievelijk {} neuronen. ".format(self.k)
-        t = t + "De testdata bestaat uit {} voorbeelden met {} waarden ieder.\n"\
+        s = "Neuraal netwerk heeft {} verborgen laag/lagen. ".format(len(self.k))
+        s = s + "De lagen bevatten respectievelijk {} neuronen. ".format(self.k)
+        s = s + "De testdata bestaat uit {} voorbeelden met {} waarden ieder.\n"\
             .format(self.j, self.l)
-        return t
+        return s
 
     def create_k(self, k):
         """ Zet 'k' in een goede vorm (lijst) als het een getal is"""
@@ -81,7 +72,9 @@ class MultiLayerNeuralNetwork():
         print("Exporteren voltooid\n")
 
     def import_parameters(self, bestand):
-        """ Importeer parameters uit een .npz bestand, gecreëerd door export_parameters() """
+        """ Importeer parameters uit een .npz bestand,
+        die is gecreëerd door export_parameters()
+        """
         print("Bezig met laden van data in " +str(bestand) +".npz")
         if not isinstance(bestand, str):
             bestand = str(bestand)
@@ -147,15 +140,19 @@ class MultiLayerNeuralNetwork():
          return np.round(self.m*self.bereken_y(invoer, self.p))
 
 
-if __name__ == "__main__":
+
+
+
+def main():
     """ basis testen voor het netwerk """
     netwerk = MultiLayerNeuralNetwork([4,5], np.array([[2,4,6],[3,5,7]]), np.array([1,2]))
-    #netwerk.export_parameters("test")
-    # print("w:", [np.shape(netwerk.w[a]) for a in range(len(netwerk.w))], netwerk.w)
-    # print("b:", [np.shape(netwerk.b[a]) for a in range(len(netwerk.w))], netwerk.b)
-    #n = MultiLayerNeuralNetwork()
-    #n.import_parameters("test")
-    netwerk.train(100, 1)
+    netwerk.train(1000, 1)
+    netwerk.export_parameters("test")
+    n = MultiLayerNeuralNetwork()
+    n.import_parameters("test")
+    q = n.predict([[1,2,3],[4,5,6]])
+    w = netwerk.predict([1,2,3])
+    print(q, w)
 
-# MultiLayerNeuralNetwork([3,4,5,6,7,8], np.array([[2,4,6],[3,5,7]]), np.array([1,2]))
-# MultiLayerNeuralNetwork(2, np.array([[2,4,6],[3,5,7]]), np.array([1,2]))
+if __name__ == "__main__":
+    main()
