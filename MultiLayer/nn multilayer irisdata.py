@@ -1,7 +1,7 @@
 import autograd.numpy as np
 from autograd import grad
 import csv
-from TwoLayerNeuralNetwork import TwoLayerNeuralNetwork
+from MultiLayerNeuralNetwork import MultiLayerNeuralNetwork
 
 m = 150
 label = {"Iris-setosa" : 1, "Iris-versicolor" : 2, "Iris-virginica" : 3}
@@ -27,5 +27,5 @@ with open('Iris.csv', newline='') as csvfile:
 # and y contains 150 labels (1, 2, 3)
 # Dit is de trainingsdata
 
-netwerk = TwoLayerNeuralNetwork(3, X, Y, 10, 3)
-netwerk.train(100, 0.1)
+netwerk = MultiLayerNeuralNetwork([7, 5, 3], X, Y)
+netwerk.train(10000, 0.04)

@@ -8,12 +8,11 @@ X = np.array([[0,0], [0,1], [1,0], [1,1]])
 Y = np.array([0, 0, 0, 1]) # OR
 
 # invoer -> 3
-X = np.array([[0,0,0], [0,0,1], [0,1,0], [0,1,1], [1,0,0], [1,0,1], [1,1,0], [1,1,1]])
+#X = np.array([[0,0,0], [0,0,1], [0,1,0], [0,1,1], [1,0,0], [1,0,1], [1,1,0], [1,1,1]])
 #Y = np.array([0, 1, 1, 1, 1, 1, 1, 1]) # minimaal 1
-Y = np.array([0, 0, 0, 1, 0, 1, 1, 1])# minimaal 2
+#Y = np.array([0, 0, 0, 1, 0, 1, 1, 1])# minimaal 2
 
-netwerk = MultiLayerNeuralNetwork([10, 8], X, Y, 1, 1)
-#netwerk.train(100, 1e0)
-
+netwerk = MultiLayerNeuralNetwork([2, 2], X, Y)
+netwerk.train(100, 1)
  
 
