@@ -162,8 +162,8 @@ class MultiLayerNeuralNetwork():
 
         aantal_fout = 0
         for i in range(self.j):
-            a = np.round(self.predict(invoer[i]))
-            b = np.round(self.m * self.Y[i]) - a
+            a = self.predict(invoer[i])
+            b = np.round(self.m * self.Y[i])
             if a != b:
                 aantal_fout += 1
 
@@ -177,7 +177,8 @@ class MultiLayerNeuralNetwork():
         for laag in range(len(self.w)):
             s = np.dot(y, self.w[laag]) + self.b[laag]
             y = self.sigma(s)
-        return y
+        Y = y * self.m
+        return np.round(Y)
 
 
 
@@ -186,8 +187,8 @@ class MultiLayerNeuralNetwork():
 def main():
     """ basis testen voor het netwerk """
     netwerk = MultiLayerNeuralNetwork([4,5], np.array([[2,4,6],[3,5,7]]), np.array([1,2]))
-    netwerk.train(1000, 1)
-    netwerk.predict([1,2,3])
+    netwerk.train(1000, 2)
+    print(netwerk.predict([1,2,3]))
     netwerk.bepaal_succes(netwerk.X, netwerk.Y)
 
 if __name__ == "__main__":
