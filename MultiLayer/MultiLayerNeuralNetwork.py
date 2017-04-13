@@ -112,7 +112,7 @@ class MultiLayerNeuralNetwork():
          verschil = np.transpose(y_uit) - self.Y
          verschil = verschil.flatten()
          return np.dot(verschil, verschil)
-        
+
     def bereken_y(self, invoer, p):
         w = p[:len(self.k) + 1]
         b = p[len(self.k) + 1:]
@@ -124,22 +124,27 @@ class MultiLayerNeuralNetwork():
 
     def train(self, iteraties, alfa):
         """ train netwerk met gegeven invoer en gegeven uitvoer """
-        print('oude waarden', self.p)
         for i in range(iteraties):
-            if i%100 == 0:
-                print(self.fout(self.p))
             gradient_functie = grad(self.fout)
             gradient = gradient_functie(self.p)
-            for i in range(len(self.p)):
-                self.p[i] = self.p[i] - alfa * gradient[i]
-        print('nieuwe waarden',  self.p)
+            for j in range(len(self.p)):
+                self.p[j] = self.p[j] - alfa * gradient[j]
+
+            if i%np.int(np.ceil(0.1*iteraties)) == 0:
+                num = str(i).rjust(len(str(iteraties))) + " / " + str(iteraties)
+                fout = str(self.fout(self.p))
+                print("{} iteraties gedaan. Huidige fout: {}".format(num,fout))
+
+        print(iteraties, "/", iteraties, "iteraties gedaan. "+
+              "Huidige fout: " + str(self.fout(self.p)) +"\n")
         self.printeind()
+
 
     def printeind(self):
         output = np.zeros((self.j, self.l + 3))
         print('Resultaten per voorbeeld:')
         aantal_fout = 0
-        for i in range(self.j):            
+        for i in range(self.j):
             output[i][0:self.l] = np.round(self.n *self.X[i])
             output[i][self.l] = self.predict(self.X[i])
             output[i][self.l + 1] = np.round(self.m * self.Y[i]) \
