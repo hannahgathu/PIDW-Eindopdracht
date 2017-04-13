@@ -9,18 +9,17 @@ class MultiLayerNeuralNetwork():
         Y is de bekende uitvoer bij de testdata
         """
     def __init__(self, k=1, X=np.array([1,1]), Y=np.array([1])):
-        self.l = np.shape(X)[-1] #lengte van 1 input
-        self.j = np.size(Y) #aantal voorbeelden testinput
+        self.l = np.shape(X)[-1] # lengte van 1 input
+        self.j = np.size(Y) # aantal voorbeelden testinput
         self.k = self.create_k(k)
         self.w = self.create_w()
-##        self.w = [np.array([[0,1], [0,1]]), np.array([[1,0], [1,0]]), np.array([0,1])]
         self.b = self.create_b()
-##        self.b = [np.array([1,2]), np.array([3,4]), np.array([5])]
         self.p = self.w + self.b
-        self.n = np.max(X) #getal waarmee X genormaliseerd wordt
-        self.m = np.max(Y) #getal waarmee Y genormaliseerd wordt
+        self.n = np.max(X) # normalisatie X
+        self.m = np.max(Y) # normalisatie Y
         self.X = np.round(X/self.n, 1)
         self.Y = np.round(Y/self.m, 1)
+        print("Nieuw neuraal netwerk gemaakt.")
         print(self)
 
     def __str__(self):
@@ -68,7 +67,7 @@ class MultiLayerNeuralNetwork():
         np.savez_compressed(str(bestand)+'.npz',
                             l=self.l, j=self.j, k=self.k, w=self.w, b=self.b,
                             n=self.n, m=self.m, X=self.X, Y=self.Y
-                            )
+                           )
         print("Exporteren voltooid\n")
 
     def import_parameters(self, bestand):
@@ -147,12 +146,7 @@ def main():
     """ basis testen voor het netwerk """
     netwerk = MultiLayerNeuralNetwork([4,5], np.array([[2,4,6],[3,5,7]]), np.array([1,2]))
     netwerk.train(1000, 1)
-    netwerk.export_parameters("test")
-    n = MultiLayerNeuralNetwork()
-    n.import_parameters("test")
-    q = n.predict([[1,2,3],[4,5,6]])
-    w = netwerk.predict([1,2,3])
-    print(q, w)
+    netwerk.predict([1,2,3])
 
 if __name__ == "__main__":
     main()
