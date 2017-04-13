@@ -151,7 +151,26 @@ class MultiLayerNeuralNetwork():
                    format(output[i][0:self.l], output[i][self.l],\
                           output[i][self.l+1]))
         print('Aantal verkeerd voorspelde antwoorden', aantal_fout)
-    
+
+
+    def bepaal_succes(self, invoer, uitvoer):
+        """ bepaal aantal verkeerd voorspelde antwoorden """
+        if not isinstance(invoer, np.ndarray):
+            invoer = [invoer]
+        if not isinstance(uitvoer, np.ndarray):
+            uitvoer = [uitvoer]
+
+        aantal_fout = 0
+        for i in range(self.j):
+            a = np.round(self.predict(invoer[i]))
+            b = np.round(self.m * self.Y[i]) - a
+            if a != b:
+                aantal_fout += 1
+
+        print('Aantal verkeerd voorspelde antwoorden: {} '.format(aantal_fout) +
+              '({0:.1f} %)'.format(100 * aantal_fout / np.size(uitvoer)))
+
+
     def predict(self, invoer):
         """ voorspel een uitvoer voor de gegeven invoer """
         y = invoer
