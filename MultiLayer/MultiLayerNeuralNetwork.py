@@ -153,8 +153,12 @@ class MultiLayerNeuralNetwork():
         print('Aantal verkeerd voorspelde antwoorden', aantal_fout)
     
     def predict(self, invoer):
-         """ voorspelt een uitvoer voor de gegeven invoer """
-         return np.round(self.m*self.bereken_y(invoer, self.p))
+        """ voorspel een uitvoer voor de gegeven invoer """
+        y = invoer
+        for laag in range(len(self.w)):
+            s = np.dot(y, self.w[laag]) + self.b[laag]
+            y = self.sigma(s)
+        return y
 
 
 
@@ -165,6 +169,7 @@ def main():
     netwerk = MultiLayerNeuralNetwork([4,5], np.array([[2,4,6],[3,5,7]]), np.array([1,2]))
     netwerk.train(1000, 1)
     netwerk.predict([1,2,3])
+    netwerk.bepaal_succes(netwerk.X, netwerk.Y)
 
 if __name__ == "__main__":
     main()
