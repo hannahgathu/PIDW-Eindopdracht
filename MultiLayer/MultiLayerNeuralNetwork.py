@@ -83,6 +83,24 @@ class MultiLayerNeuralNetwork():
         print("Het netwerk heeft nieuwe parameters:")
         print(self)
 
+    def nieuwe_testdata(self, invoer, uitvoer):
+        """ voeg data toe aan bestaande testdata """
+        print("De nieuwe data wordt toegevoegd")
+        self.X = self.X + invoer/self.n
+        self.Y = self.Y + uitvoer/self.m
+        self.l = np.shape(self.X)[-1]
+        self.j = np.size(self.Y)
+        print("De testdata heeft nu {} voorbeelden".format(self.j))
+
+    def reset_testdata(self, invoer, uitvoer):
+        """ vervang bestaande testdata door nieuwe data """
+        print("De testdata wordt vervangen door nieuwe data")
+        self.X = invoer/self.n
+        self.Y = uitvoer/self.m
+        self.l = np.shape(self.X)[-1]
+        self.j = np.size(self.Y)
+        print("De testdata heeft nu {} voorbeelden".format(self.j))
+
     def sigma(self, x):
         """ activatiefunctie sigma """
         return 1/(1+np.exp(-x))
