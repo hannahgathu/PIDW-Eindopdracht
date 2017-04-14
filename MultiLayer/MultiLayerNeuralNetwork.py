@@ -21,11 +21,11 @@ class MultiLayerNeuralNetwork():
         X: invoer van testdata
         Y: uitvoer van testdata
         """
-    def __init__(self, k=1, X=np.array([1,1]), Y=np.array([1])):
+    def __init__(self, k=1, X=np.array([1,1]), Y=np.array([1]), f=1):
         self.l = np.shape(X)[-1]
         self.j = np.size(Y)
         self.k = self.create_k(k)
-        self.p = self.create_w() + self.create_b()
+        self.p = self.create_w(f) + self.create_b()
         self.n = np.max(X) # normalisatie X
         self.m = np.max(Y) # normalisatie Y
         self.X = X
@@ -50,12 +50,12 @@ class MultiLayerNeuralNetwork():
         return k
 
 
-    def create_w(self):
+    def create_w(self, f):
         """ Maak een lijst met arrays (matrices) met gewichten.
         Iedere array representeert de connecties tussen twee opeenvolgende
         lagen.
         """
-        factor = 1
+        factor = f
         q = [self.l] + self.k + [1] #lijst met aantal neuronen per laag (incl. start en eind)
         w = []
         for i in range(len(q)-1):
