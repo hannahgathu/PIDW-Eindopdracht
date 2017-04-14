@@ -27,5 +27,6 @@ with open('Iris.csv', newline='') as csvfile:
 # and y contains 150 labels (1, 2, 3)
 # Dit is de trainingsdata
 
-netwerk = MultiLayerNeuralNetwork([7, 5, 3], X, Y)
+factor = 1/2
+netwerk = MultiLayerNeuralNetwork([7, 5, 3], X, Y, factor)
 netwerk.train(2500, 0.01)
