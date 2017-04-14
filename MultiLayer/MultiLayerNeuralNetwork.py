@@ -4,21 +4,33 @@ from autograd import grad
 
 class MultiLayerNeuralNetwork():
     """ Neuraal netwerk met meerdere verborgen lagen:
+        argumenten:
         k is een lijst van de aantallen eenheden per verborgen laag
         X is de invoer van data om te leren,
         Y is de bekende uitvoer bij de testdata
+
+        attributen:
+        l: lengte van een invoer
+        j: aantal voorbeelden in testdata
+        k: lijst met aantal eenheden per verborgen laag
+        p: lijst met
+            * arrays met gewichten van verbindingen tussen lagen (eerste helft)
+            * arrays met biassen van elke laag (tweede helft)
+        n: normalisatie factor voor invoer
+        m: normalisatie factor voor uitvoer
+        X: invoer van testdata
+        Y: uitvoer van testdata
         """
     def __init__(self, k=1, X=np.array([1,1]), Y=np.array([1])):
-        self.l = np.shape(X)[-1] # lengte van 1 input
-        self.j = np.size(Y) # aantal voorbeelden testinput
+        self.l = np.shape(X)[-1]
+        self.j = np.size(Y)
         self.k = self.create_k(k)
-        self.w = self.create_w()
-        self.b = self.create_b()
-        self.p = self.w + self.b
+        self.p = self.create_w() + self.create_b()
         self.n = np.max(X) # normalisatie X
         self.m = np.max(Y) # normalisatie Y
-        self.X = np.round(X/self.n, 1)
-        self.Y = np.round(Y/self.m, 1)
+        self.X = X
+        self.Y = Y
+
         print("Nieuw neuraal netwerk gemaakt.")
         print(self)
 
@@ -69,23 +81,25 @@ class MultiLayerNeuralNetwork():
         print("Bezig met exporteren van netwerk eigenschappen")
         if not isinstance(bestand, str):
             bestand = str(bestand)
-        np.savez_compressed(str(bestand)+'.npz',
-                            l=self.l, j=self.j, k=self.k, w=self.w, b=self.b,
-                            n=self.n, m=self.m, X=self.X, Y=self.Y
-                           )
+        np.savez_compressed(str(bestand)+'.npz', l=self.l, j=self.j, k=self.k,
+                            p=self.p, n=self.n, m=self.m, X=self.X, Y=self.Y)
         print("Exporteren voltooid\n")
 
 
     def import_parameters(self, bestand):
         """ Importeer parameters uit een .npz bestand,
-        die is gecreëerd door export_parameters()
+        welke is gecreëerd door export_parameters()
         """
         print("Bezig met laden van data in " +str(bestand) +".npz")
+
         if not isinstance(bestand, str):
             bestand = str(bestand)
         data = np.load(bestand+'.npz')
-        self.l, self.j, self.k, self.w, self.b = data['l'], data['j'], data['k'], data['w'], data['b']
-        self.n, self.m, self.X, self.Y = data['n'], data['m'], data['X'], data['Y']
+
+        self.l, self.j, self.k, self.p, self.n, self.m, self.X, self.Y = \
+            data['l'], data['j'], data['k'], data['p'], \
+            data['n'], data['m'], data['X'], data['Y']
+
         print("Het netwerk heeft nieuwe parameters:")
         print(self)
 
@@ -93,10 +107,12 @@ class MultiLayerNeuralNetwork():
     def nieuwe_testdata(self, invoer, uitvoer):
         """ voeg data toe aan bestaande testdata """
         print("De nieuwe data wordt toegevoegd")
-        self.X = self.X + invoer/self.n
-        self.Y = self.Y + uitvoer/self.m
+        self.X = self.X + invoer
+        self.Y = self.Y + uitvoer
         self.l = np.shape(self.X)[-1]
         self.j = np.size(self.Y)
+        self.n = np.max(self.X)
+        self.m = np.max(self.Y)
         print("De testdata heeft nu {} voorbeelden".format(self.j))
 
 
@@ -107,6 +123,8 @@ class MultiLayerNeuralNetwork():
         self.Y = uitvoer/self.m
         self.l = np.shape(self.X)[-1]
         self.j = np.size(self.Y)
+        self.n = np.max(self.X)
+        self.m = np.max(self.Y)
         print("De testdata heeft nu {} voorbeelden".format(self.j))
 
 
@@ -118,23 +136,25 @@ class MultiLayerNeuralNetwork():
     def fout(self, p):
         """ bepaal de fout met als variabelen de gewichten en bias """
         y_uit = self.bereken_y(self.X, p)
-        verschil = np.transpose(y_uit) - self.Y
-        verschil = verschil.flatten()
+        verschil = y_uit - self.Y
         return np.dot(verschil, verschil)
 
 
     def bereken_y(self, invoer, p):
         w = p[:len(self.k) + 1]
         b = p[len(self.k) + 1:]
-        yt = invoer
-        for i in range(len(w)):
-            s = np.dot(yt, w[i]) + b[i]
-            yt = self.sigma(s)
-        return yt
+        y = invoer / self.n
+        for laag in range(len(w)):
+            s = np.dot(y, w[laag]) + b[laag]
+            y = self.sigma(s)
+        return np.reshape(y * self.m, -1)
 
 
     def train(self, iteraties, alfa):
         """ train netwerk met gegeven invoer en gegeven uitvoer """
+        print("Het netwerk wordt nu getraind.\n"+
+               "Het aantal iteraties is {}. ".format(iteraties)+
+               "De train snelheid alfa is {}.\n".format(alfa))
         for i in range(iteraties):
             gradient_functie = grad(self.fout)
             gradient = gradient_functie(self.p)
@@ -148,7 +168,8 @@ class MultiLayerNeuralNetwork():
 
         print(iteraties, "/", iteraties, "iteraties gedaan. "+
               "Huidige fout: " + str(self.fout(self.p)) +"\n")
-        self.printeind()
+        if self.j < 25: self.printeind()
+        else: self.bepaal_succes(self.X, self.Y)
 
 
     def printeind(self):
@@ -156,51 +177,57 @@ class MultiLayerNeuralNetwork():
         print('Resultaten per voorbeeld:')
         aantal_fout = 0
         for i in range(self.j):
-            output[i][0:self.l] = np.round(self.n *self.X[i])
-            output[i][self.l] = self.predict(self.X[i])
-            output[i][self.l + 1] = np.round(self.m * self.Y[i]) \
-                                        - output[i][self.l]
-            if output[i][self.l + 1] != 0:
+            output[i][0:self.l] = np.round(self.X[i])
+            output[i][self.l] = np.round(self.Y[i])
+            output[i][self.l+1] = np.round(self.predict(self.X[i]))
+            output[i][self.l+2] = np.round(self.Y[i]) - output[i][self.l+1]
+
+            if output[i][self.l + 2] != 0:
                 aantal_fout += 1
-            if self.j <= 100:
-                print('In: {0}, Uit: {1:0f}, Verschil met correct: {2:.0f}'.\
-                   format(output[i][0:self.l], output[i][self.l],\
-                          output[i][self.l+1]))
-        print('Aantal verkeerd voorspelde antwoorden', aantal_fout)
+
+            print("In: {0}, ".format(output[i][0:self.l])+
+                  "Verwacht: {0:.0f}, ".format(output[i][self.l])+
+                  "Uit: {0:.0f}, ".format(output[i][self.l+1])+
+                  "Verschil met correct: {0:.0f}".format(output[i][self.l+2]))
+        print('Aantal verkeerd voorspelde antwoorden:', aantal_fout)
 
 
     def bepaal_succes(self, invoer, uitvoer):
-        """ bepaal aantal verkeerd voorspelde antwoorden """
+        """ print het aantal verkeerd voorspelde antwoorden
+        de invoer en uitvoer zijn niet-genormaliseerde getallen
+        """
         if not isinstance(invoer, np.ndarray):
             invoer = [invoer]
         if not isinstance(uitvoer, np.ndarray):
             uitvoer = [uitvoer]
 
-        aantal_fout = 0
-        for q in range(self.j):
-            a = self.predict(invoer[q])
-            b = np.round(self.m * self.Y[q])
-            if a != b:
-                aantal_fout += 1
+        a = np.round(self.predict(invoer))
+        b = np.round(uitvoer)
+        c = a - b
 
+        aantal_fout = np.count_nonzero(c)
         print('Aantal verkeerd voorspelde antwoorden: {} '.format(aantal_fout) +
-              '({0:.1f} %)'.format(100 * aantal_fout / np.size(uitvoer)))
+              '({0:.1f} %)\n'.format(100 * aantal_fout / np.size(uitvoer)))
 
 
     def predict(self, invoer):
-        """ voorspel een uitvoer voor de gegeven invoer """
-        y = invoer
-        for laag in range(len(self.w)):
-            s = np.dot(y, self.w[laag]) + self.b[laag]
+        """ voorspel een niet-afgeronde uitkomst voor de gegeven invoer """
+        w = self.p[:len(self.k) + 1]
+        b = self.p[len(self.k) + 1:]
+        y = invoer / self.n
+        for laag in range(len(w)):
+            s = np.dot(y, w[laag]) + b[laag]
             y = self.sigma(s)
-        Y = y * self.m
-        return np.round(Y)
+        return np.reshape(y * self.m, -1)
+
+
+
 
 
 def main():
     """ basis testen voor het netwerk """
     netwerk = MultiLayerNeuralNetwork([4,5], np.array([[2,4,6], [3,5,7]]), np.array([1,2]))
-    netwerk.train(1000, 2)
+    netwerk.train(1000, 1.2)
 
 
 if __name__ == "__main__":

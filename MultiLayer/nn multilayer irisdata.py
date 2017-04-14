@@ -12,7 +12,7 @@ with open('Iris.csv', newline='') as csvfile:
      reader = csv.reader(csvfile, delimiter=',')
      #skip headers
      next(reader, None)
-   
+
      #loop over rows
      for row in reader:
          #index
@@ -28,4 +28,4 @@ with open('Iris.csv', newline='') as csvfile:
 # Dit is de trainingsdata
 
 netwerk = MultiLayerNeuralNetwork([7, 5, 3], X, Y)
-netwerk.train(10000, 0.04)
+netwerk.train(2500, 0.01)
