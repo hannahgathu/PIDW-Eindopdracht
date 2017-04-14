@@ -55,10 +55,11 @@ class MultiLayerNeuralNetwork():
         Iedere array representeert de connecties tussen twee opeenvolgende
         lagen.
         """
+        factor = 1
         q = [self.l] + self.k + [1] #lijst met aantal neuronen per laag (incl. start en eind)
         w = []
         for i in range(len(q)-1):
-            w_i = np.random.random([q[i], q[i+1]])
+            w_i = factor * np.random.random([q[i], q[i+1]])
             w.append(w_i)
         return w
 
@@ -70,7 +71,8 @@ class MultiLayerNeuralNetwork():
         q = self.k + [1]
         b = []
         for i in range(len(q)):
-            b_i = np.random.random(q[i])
+            # b_i = np.random.random(q[i])
+            b_i = np.zeros(q[i])
             b.append(b_i)
         return b
 
