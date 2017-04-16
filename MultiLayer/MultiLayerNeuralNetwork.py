@@ -6,7 +6,7 @@ class MultiLayerNeuralNetwork():
     """ Neuraal netwerk met meerdere verborgen lagen:
         argumenten:
         k is een lijst van de aantallen eenheden per verborgen laag
-        X is de invoer van data om te leren,
+        X is de invoer van data om te leren (testdata),
         Y is de bekende uitvoer bij de testdata
 
         attributen:
@@ -14,8 +14,8 @@ class MultiLayerNeuralNetwork():
         j: aantal voorbeelden in testdata
         k: lijst met aantal eenheden per verborgen laag
         p: lijst met
-            * arrays met gewichten van verbindingen tussen lagen (eerste helft)
-            * arrays met biassen van elke laag (tweede helft)
+            * arrays met gewichten van verbindingen tussen lagen (1e helft)
+            * arrays met biassen van elke laag (2e helft)
         n: normalisatie factor voor invoer
         m: normalisatie factor voor uitvoer
         X: invoer van testdata
@@ -51,12 +51,13 @@ class MultiLayerNeuralNetwork():
 
 
     def create_w(self, f):
-        """ Maak een lijst met arrays (matrices) met gewichten.
+        """ Maakt een lijst met arrays (matrices) met gewichten.
         Iedere array representeert de connecties tussen twee opeenvolgende
         lagen.
         """
         factor = f
-        q = [self.l] + self.k + [1] #lijst met aantal neuronen per laag (incl. start en eind)
+        #lijst met aantal neuronen per laag (incl. start en eind)
+        q = [self.l] + self.k + [1] 
         w = []
         for i in range(len(q)-1):
             w_i = factor * np.random.random([q[i], q[i+1]])
@@ -65,8 +66,8 @@ class MultiLayerNeuralNetwork():
 
 
     def create_b(self):
-        """ Maak een lijst met arrays met biassen.
-        De arrays zijn vectoren met de biassen van één laag.
+        """ Maakt een lijst met arrays (vectoren) met biassen.
+        Iedere arrays representeert de biassen van één laag.
         """
         q = self.k + [1]
         b = []
@@ -109,9 +110,8 @@ class MultiLayerNeuralNetwork():
     def nieuwe_testdata(self, invoer, uitvoer):
         """ voeg data toe aan bestaande testdata """
         print("De nieuwe data wordt toegevoegd")
-        self.X = self.X + invoer
-        self.Y = self.Y + uitvoer
-        self.l = np.shape(self.X)[-1]
+        self.X = np.append(self.X, invoer, axis=0)
+        self.Y = np.append(self.Y, uitvoer, axis=0)
         self.j = np.size(self.Y)
         self.n = np.max(self.X)
         self.m = np.max(self.Y)
@@ -228,8 +228,10 @@ class MultiLayerNeuralNetwork():
 
 def main():
     """ basis testen voor het netwerk """
-    netwerk = MultiLayerNeuralNetwork([4,5], np.array([[2,4,6], [3,5,7]]), np.array([1,2]))
+    netwerk = MultiLayerNeuralNetwork\
+              ([4,5], np.array([[2,4,6], [3,5,7]]), np.array([1,2]))
     netwerk.train(1000, 1.2)
+    netwerk.nieuwe_testdata(np.array([[2, 3, 6], [3, 6, 7]]), np.array([1,2]))
 
 
 if __name__ == "__main__":
