@@ -8,6 +8,7 @@ class MultiLayerNeuralNetwork():
         k is een lijst van de aantallen eenheden per verborgen laag
         X is de invoer van data om te leren (testdata),
         Y is de bekende uitvoer bij de testdata
+        f is de maximale waarde van de initiele gewichten
 
         attributen:
         l: lengte van een invoer
@@ -21,6 +22,8 @@ class MultiLayerNeuralNetwork():
         X: invoer van testdata
         Y: uitvoer van testdata
         """
+
+
     def __init__(self, k=1, X=np.array([1,1]), Y=np.array([1]), f=1):
         self.l = np.shape(X)[-1]
         self.j = np.size(Y)
@@ -57,7 +60,7 @@ class MultiLayerNeuralNetwork():
         """
         factor = f
         #lijst met aantal neuronen per laag (incl. start en eind)
-        q = [self.l] + self.k + [1] 
+        q = [self.l] + self.k + [1]
         w = []
         for i in range(len(q)-1):
             w_i = factor * np.random.random([q[i], q[i+1]])
@@ -99,9 +102,9 @@ class MultiLayerNeuralNetwork():
             bestand = str(bestand)
         data = np.load(bestand+'.npz')
 
-        self.l, self.j, self.k, self.p, self.n, self.m, self.X, self.Y = \
-            data['l'], data['j'], data['k'], data['p'], \
-            data['n'], data['m'], data['X'], data['Y']
+        (self.l, self.j, self.k, self.p, self.n, self.m, self.X, self.Y) = (
+            data['l'], data['j'], data['k'], data['p'],
+            data['n'], data['m'], data['X'], data['Y'])
 
         print("Het netwerk heeft nieuwe parameters:")
         print(self)
@@ -143,6 +146,9 @@ class MultiLayerNeuralNetwork():
 
 
     def bereken_y(self, invoer, p):
+        """ bepaal de uitvoer bij de invoer
+        hulp-functie bij fout()
+        """
         w = p[:len(self.k) + 1]
         b = p[len(self.k) + 1:]
         y = invoer / self.n
@@ -228,11 +234,10 @@ class MultiLayerNeuralNetwork():
 
 def main():
     """ basis testen voor het netwerk """
-    netwerk = MultiLayerNeuralNetwork\
-              ([4,5], np.array([[2,4,6], [3,5,7]]), np.array([1,2]))
+    netwerk = MultiLayerNeuralNetwork([4,5], np.array([[2,4,6], [3,5,7]]),
+                                      np.array([1,2]))
     netwerk.train(1000, 1.2)
     netwerk.nieuwe_testdata(np.array([[2, 3, 6], [3, 6, 7]]), np.array([1,2]))
-
 
 if __name__ == "__main__":
     main()
