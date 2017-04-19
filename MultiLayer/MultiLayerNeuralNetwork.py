@@ -24,7 +24,10 @@ class MultiLayerNeuralNetwork():
         """
 
 
-    def __init__(self, k=1, X=np.array([1,1]), Y=np.array([1]), f=1):
+    def __init__(self, k=1, X='and', Y='', f=1):
+        if X is 'and': (X, Y) = self.create_xy_and()
+        if X is 'or': (X, Y) = self.create_xy_or()
+        if X is 'xor': (X, Y) = self.create_xy_xor()
         self.l = np.shape(X)[-1]
         self.j = np.size(Y)
         self.k = self.create_k(k)
@@ -44,6 +47,30 @@ class MultiLayerNeuralNetwork():
         s = s + "De testdata bestaat uit {} voorbeelden met {} waarden ieder.\n"\
             .format(self.j, self.l)
         return s
+
+
+    def create_xy_and(self):
+        """ maak testdata om een 'and'-poort te simuleren """
+        print("Het volgende netwerk kan een 'and'-poort simuleren")
+        X = np.array([[0,0],[0,1],[1,0],[1,1]])
+        Y = np.array([0,0,0,1])
+        return (X, Y)
+
+
+    def create_xy_or(self):
+        """ maak testdata om een 'or'-poort te simuleren """
+        print("Het volgende netwerk kan een 'or'-poort simuleren")
+        X = np.array([[0,0],[0,1],[1,0],[1,1]])
+        Y = np.array([0,1,1,1])
+        return (X, Y)
+
+
+    def create_xy_xor(self):
+        """ maak testdata om een 'xor'-poort te simuleren """
+        print("Het volgende netwerk kan een 'xor'-poort simuleren")
+        X = np.array([[0,0],[0,1],[1,0],[1,1]])
+        Y = np.array([0,1,1,0])
+        return (X, Y)
 
 
     def create_k(self, k):
@@ -118,7 +145,7 @@ class MultiLayerNeuralNetwork():
         self.j = np.size(self.Y)
         self.n = np.max(self.X)
         self.m = np.max(self.Y)
-        print("De testdata heeft nu {} voorbeelden".format(self.j))
+        print("De testdata heeft nu {} voorbeelden\n".format(self.j))
 
 
     def reset_testdata(self, invoer, uitvoer):
@@ -130,7 +157,7 @@ class MultiLayerNeuralNetwork():
         self.j = np.size(self.Y)
         self.n = np.max(self.X)
         self.m = np.max(self.Y)
-        print("De testdata heeft nu {} voorbeelden".format(self.j))
+        print("De testdata heeft nu {} voorbeelden\n".format(self.j))
 
 
     def sigma(self, x):
@@ -233,11 +260,14 @@ class MultiLayerNeuralNetwork():
 
 
 def main():
-    """ basis testen voor het netwerk """
-    netwerk = MultiLayerNeuralNetwork([4,5], np.array([[2,4,6], [3,5,7]]),
-                                      np.array([1,2]))
-    netwerk.train(1000, 1.2)
-    netwerk.nieuwe_testdata(np.array([[2, 3, 6], [3, 6, 7]]), np.array([1,2]))
+    # n = MultiLayerNeuralNetwork() # and-poort
+    # n = MultiLayerNeuralNetwork([1], 'or') # or-poort
+    n = MultiLayerNeuralNetwork([3,3], 'xor') # and-poort
 
+    # (x,y) = (np.array([[2,4,6], [3,5,7]]),np.array([1,2]))
+    # n = MultiLayerNeuralNetwork([4,5], x, y, 0.5) # willekeurig gekozen getallen
+    # n.nieuwe_testdata(np.array([[2, 3, 6], [3, 6, 7]]), np.array([0,2]))
+
+    n.train(1000, 1)
 if __name__ == "__main__":
     main()
