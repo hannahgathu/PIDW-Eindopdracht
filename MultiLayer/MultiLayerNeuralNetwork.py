@@ -267,12 +267,5 @@ class MultiLayerNeuralNetwork():
 
 
 if __name__ == "__main__":
-    # n = MultiLayerNeuralNetwork([]) # and-poort
-    # n = MultiLayerNeuralNetwork([2], 'or') # or-poort
     n = MultiLayerNeuralNetwork([3,3], 'xor') # and-poort
-
-    # (x,y) = (np.array([[2,4,6], [3,5,7]]),np.array([1,2]))
-    # n = MultiLayerNeuralNetwork([4,5], x, y, 0.5) # willekeurig gekozen getallen
-    # n.nieuwe_testdata(np.array([[2, 3, 6], [3, 6, 7]]), np.array([0,2]))
-
     n.train(1000, 1)
