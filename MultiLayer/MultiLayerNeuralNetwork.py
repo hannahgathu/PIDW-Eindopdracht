@@ -256,13 +256,9 @@ class MultiLayerNeuralNetwork():
 
     def predict(self, invoer):
         """ voorspel een niet-afgeronde uitkomst voor de gegeven invoer """
-        w = self.p[:len(self.k) + 1]
-        b = self.p[len(self.k) + 1:]
-        y = invoer / self.n
-        for laag in range(len(w)):
-            s = np.dot(y, w[laag]) + b[laag]
-            y = self.sigma(s)
-        return np.reshape(y * self.m, -1)
+        p = self.p
+        return self.bereken_y(invoer, p)
+
 
 
 
