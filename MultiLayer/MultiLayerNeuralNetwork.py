@@ -112,9 +112,15 @@ class MultiLayerNeuralNetwork():
         """ Exporteer parameters """
         # voor een correcte werking zouden alle self.* hierin moeten
         print("Bezig met exporteren van netwerk eigenschappen")
+
         if not isinstance(bestand, str):
             bestand = str(bestand)
-        np.savez_compressed(str(bestand)+'.npz', l=self.l, j=self.j, k=self.k,
+        if bestand[-4:] == '.npz':
+            naam = bestand
+        else:
+            naam = bestand+'.npz'
+
+        np.savez_compressed(naam, l=self.l, j=self.j, k=self.k,
                             p=self.p, n=self.n, m=self.m, X=self.X, Y=self.Y)
         print("Exporteren naar " + str(bestand) + " voltooid\n")
 
@@ -127,8 +133,12 @@ class MultiLayerNeuralNetwork():
 
         if not isinstance(bestand, str):
             bestand = str(bestand)
-        data = np.load(bestand+'.npz')
+        if bestand[-4:] == '.npz':
+            naam = bestand
+        else:
+            naam = bestand+'.npz'
 
+        data = np.load(naam)
         (self.l, self.j, self.k, self.p, self.n, self.m, self.X, self.Y) = (
             data['l'], data['j'], data['k'], data['p'],
             data['n'], data['m'], data['X'], data['Y'])
