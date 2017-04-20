@@ -110,7 +110,6 @@ class MultiLayerNeuralNetwork():
 
     def export_parameters(self, bestand):
         """ Exporteer parameters """
-        # voor een correcte werking zouden alle self.* hierin moeten
         print("Bezig met exporteren van netwerk eigenschappen")
 
         if not isinstance(bestand, str):
