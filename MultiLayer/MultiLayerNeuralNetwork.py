@@ -116,14 +116,14 @@ class MultiLayerNeuralNetwork():
             bestand = str(bestand)
         np.savez_compressed(str(bestand)+'.npz', l=self.l, j=self.j, k=self.k,
                             p=self.p, n=self.n, m=self.m, X=self.X, Y=self.Y)
-        print("Exporteren voltooid\n")
+        print("Exporteren naar " + str(bestand) + " voltooid\n")
 
 
     def import_parameters(self, bestand):
         """ Importeer parameters uit een .npz bestand,
         welke is gecreëerd door export_parameters()
         """
-        print("Bezig met laden van data in " +str(bestand) +".npz")
+        print("Bezig met laden van data in " + str(bestand) + ".npz")
 
         if not isinstance(bestand, str):
             bestand = str(bestand)
@@ -257,9 +257,7 @@ class MultiLayerNeuralNetwork():
 
 
 
-
-
-def main():
+if __name__ == "__main__":
     # n = MultiLayerNeuralNetwork() # and-poort
     # n = MultiLayerNeuralNetwork([1], 'or') # or-poort
     n = MultiLayerNeuralNetwork([3,3], 'xor') # and-poort
@@ -269,5 +267,3 @@ def main():
     # n.nieuwe_testdata(np.array([[2, 3, 6], [3, 6, 7]]), np.array([0,2]))
 
     n.train(1000, 1)
-if __name__ == "__main__":
-    main()
