@@ -50,7 +50,7 @@ class MultiLayerNeuralNetwork():
 
 
     def create_xy_and(self):
-        """ maak testdata om een 'and'-poort te simuleren """
+        """ maakt testdata om een 'and'-poort te simuleren """
         print("Het volgende netwerk kan een 'and'-poort simuleren")
         X = np.array([[0,0],[0,1],[1,0],[1,1]])
         Y = np.array([0,0,0,1])
@@ -58,7 +58,7 @@ class MultiLayerNeuralNetwork():
 
 
     def create_xy_or(self):
-        """ maak testdata om een 'or'-poort te simuleren """
+        """ maakt testdata om een 'or'-poort te simuleren """
         print("Het volgende netwerk kan een 'or'-poort simuleren")
         X = np.array([[0,0],[0,1],[1,0],[1,1]])
         Y = np.array([0,1,1,1])
@@ -66,7 +66,7 @@ class MultiLayerNeuralNetwork():
 
 
     def create_xy_xor(self):
-        """ maak testdata om een 'xor'-poort te simuleren """
+        """ maakt testdata om een 'xor'-poort te simuleren """
         print("Het volgende netwerk kan een 'xor'-poort simuleren")
         X = np.array([[0,0],[0,1],[1,0],[1,1]])
         Y = np.array([0,1,1,0])
@@ -109,7 +109,7 @@ class MultiLayerNeuralNetwork():
 
 
     def export_parameters(self, bestand):
-        """ Exporteer parameters """
+        """ Exporteert parameters """
         print("Bezig met exporteren van netwerk eigenschappen")
 
         if not isinstance(bestand, str):
@@ -125,7 +125,7 @@ class MultiLayerNeuralNetwork():
 
 
     def import_parameters(self, bestand):
-        """ Importeer parameters uit een .npz bestand,
+        """ Importeert parameters uit een .npz bestand,
         welke is gecreëerd door export_parameters()
         """
         if not isinstance(bestand, str):
@@ -147,7 +147,7 @@ class MultiLayerNeuralNetwork():
 
 
     def nieuwe_testdata(self, invoer, uitvoer):
-        """ voeg data toe aan bestaande testdata """
+        """ voegt data toe aan bestaande testdata """
         print("De nieuwe data wordt toegevoegd")
         self.X = np.append(self.X, invoer, axis=0)
         self.Y = np.append(self.Y, uitvoer, axis=0)
@@ -158,7 +158,7 @@ class MultiLayerNeuralNetwork():
 
 
     def reset_testdata(self, invoer, uitvoer):
-        """ vervang bestaande testdata door nieuwe data """
+        """ vervangt bestaande testdata door nieuwe data """
         print("De testdata wordt vervangen door nieuwe data")
         self.X = invoer/self.n
         self.Y = uitvoer/self.m
@@ -175,14 +175,14 @@ class MultiLayerNeuralNetwork():
 
 
     def fout(self, p):
-        """ bepaal de fout met als variabelen de gewichten en bias """
+        """ bepaalt de fout met als variabelen de gewichten en bias """
         y_uit = self.bereken_y(self.X, p)
         verschil = y_uit - self.Y
         return np.dot(verschil, verschil)
 
 
     def bereken_y(self, invoer, p):
-        """ bepaal de uitvoer bij de invoer
+        """ bepaalt de uitvoer bij de invoer
         hulp-functie bij fout()
         """
         w = p[:len(self.k) + 1]
@@ -195,7 +195,7 @@ class MultiLayerNeuralNetwork():
 
 
     def train(self, iteraties, alfa):
-        """ train netwerk met gegeven invoer en gegeven uitvoer """
+        """ traint netwerk met gegeven invoer en gegeven uitvoer """
         print("Het netwerk wordt nu getraind.\n"+
                "Het aantal iteraties is {}. ".format(iteraties)+
                "De train snelheid alfa is {}.\n".format(alfa))
@@ -217,6 +217,7 @@ class MultiLayerNeuralNetwork():
 
 
     def printeind(self):
+        """print uitgebreide eindbevindingen""""
         output = np.zeros((self.j, self.l + 3))
         print('Resultaten per voorbeeld:')
         aantal_fout = 0
